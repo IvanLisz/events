@@ -5,45 +5,51 @@
 
 'use strict';
 
-var Thing = require('../api/thing/thing.model');
+var Event = require('../api/event/event.model');
 var User = require('../api/user/user.model');
 
-Thing.find({}).remove(function() {
-  Thing.create({
-    name : 'Development Tools',
-    info : 'Integration with popular tools such as Bower, Grunt, Karma, Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, Stylus, Sass, CoffeeScript, and Less.'
-  }, {
-    name : 'Server and Client integration',
-    info : 'Built with a powerful and fun stack: MongoDB, Express, AngularJS, and Node.'
-  }, {
-    name : 'Smart Build System',
-    info : 'Build system ignores `spec` files, allowing you to keep tests alongside code. Automatic injection of scripts and styles into your index.html'
-  },  {
-    name : 'Modular Structure',
-    info : 'Best practice client and server structures allow for more code reusability and maximum scalability'
-  },  {
-    name : 'Optimized Build',
-    info : 'Build process packs up your templates as a single JavaScript payload, minifies your scripts/css/images, and rewrites asset names for caching.'
-  },{
-    name : 'Deployment Ready',
-    info : 'Easily deploy your app to Heroku or Openshift with the heroku and openshift subgenerators'
-  });
+Event.find({}).remove(function() {
+	Event.create({
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creation: 1432191191230,
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		date: 1434191191230,
+		location: 'Buenos Aires, argentina'
+	},
+
+	{
+		name: 'evento de poder',
+		description: 'viene pele',
+		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',
+		creation: 1432191191230,
+		creator: {
+			id: 1,
+			username: 'pele'
+		},
+		date: 1435191191230,
+		location: 'Buenos Aires, Argentina'
+	});
 });
 
 User.find({}).remove(function() {
-  User.create({
-    provider: 'local',
-    name: 'Test User',
-    email: 'test@test.com',
-    password: 'test'
-  }, {
-    provider: 'local',
-    role: 'admin',
-    name: 'Admin',
-    email: 'admin@admin.com',
-    password: 'admin'
-  }, function() {
-      console.log('finished populating users');
-    }
-  );
+	User.create({
+		provider: 'local',
+		name: 'Test User',
+		email: 'test@test.com',
+		password: 'test'
+	}, {
+		provider: 'local',
+		role: 'admin',
+		name: 'Admin',
+		email: 'admin@admin.com',
+		password: 'admin'
+	}, function() {
+			console.log('finished populating users');
+		}
+	);
 });
