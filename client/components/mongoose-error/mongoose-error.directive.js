@@ -3,7 +3,7 @@
 /**
  * Removes server error when user updates input
  */
-angular.module('eventsApp')
+angular.module('events')
   .directive('mongooseError', function () {
     return {
       restrict: 'A',

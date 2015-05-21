@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('eventsApp')
+angular.module('events')
   .controller('SettingsCtrl', function ($scope, User, Auth) {
     $scope.errors = {};
 

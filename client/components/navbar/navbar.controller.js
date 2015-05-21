@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('eventsApp')
+angular.module('events')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
     $scope.menu = [{
       'title': 'Home',
