@@ -1,12 +1,18 @@
 'use strict';
 
-angular.module('eventsApp', [
+angular.module('events', [
   'ngCookies',
   'ngResource',
   'ngSanitize',
   'btford.socket-io',
   'ui.router',
-  'ui.bootstrap'
+  'ui.bootstrap',
+
+  // Thirdpaty
+  'angucomplete-alt',
+
+  // Pages
+  'events.landing'
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
     $urlRouterProvider
@@ -52,3 +58,6 @@ angular.module('eventsApp', [
       });
     });
   });
+
+// Modules
+angular.module('events.landing', ['events']);
