@@ -2,12 +2,12 @@
 	'use strict';
 
 	angular
-		.module('events.landing')
-		.directive('landingPage', landingPageDirective);
+		.module('events.event')
+		.directive('eventPrivatePage', eventPrivatePageDirective);
 
 	/**
 	 * @ngdoc directive
-	 * @name events.landing.directive:landingPage
+	 * @name events.event.directive:eventPrivatePage
 	 * @restrict E
 	 * @scope
 	 *
@@ -18,17 +18,17 @@
 	 *
 	 */
 
-	landingPageDirective.$inject = [];
+	eventPrivatePageDirective.$inject = [];
 
-	function landingPageDirective () {
+	function eventPrivatePageDirective () {
 		return {
 			restrict: 'E',
-			templateUrl: 'app/landing/landing.html',
+			templateUrl: 'app/event/event-private.html',
 			scope: {},
-			controller: landingPageController,
+			controller: eventPrivatePageController,
 			controllerAs: 'ctrl',
 			bindToController: true,
-			require: 'landingPage',
+			require: 'eventPrivatePage',
 			link: link
 		};
 
@@ -37,17 +37,10 @@
 		}
 	}
 
-	landingPageController.$inject = ['$state'];
+	eventPrivatePageController.$inject = ['$scope', '$http', 'socket'];
 
-	function landingPageController ($state) {
-		/*jshint validthis: true */
+	function eventPrivatePageController ($scope, $http, socket) {
 		var ctrl = this;
-
-		ctrl.goToEvent = function (event) {
-			$state.go('event', {'id': event.originalObject.id});
-		};
-
-		/*
 
 		$scope.awesomeThings = [];
 
@@ -71,7 +64,5 @@
 		$scope.$on('$destroy', function () {
 			socket.unsyncUpdates('thing');
 		});
-
-*/
 	}
 })();

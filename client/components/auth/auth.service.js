@@ -127,6 +127,15 @@ angular.module('events')
         }
       },
 
+      getUserInEventStatus: function(eventId) {
+        if (!currentUser.hasOwnProperty('role')) {
+          return false;
+        }
+        return currentUser.events.filter(function (event){
+          return event.id === eventId;
+        })[0];
+      },
+
       /**
        * Check if a user is an admin
        *

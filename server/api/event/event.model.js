@@ -1,9 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+var mongoose 		= require('mongoose'),
+	Schema 			= mongoose.Schema;
 
-var eventSchema = new Schema({
+var EventSchema = new Schema({
+	id: Number,
 	name: String,
 	description: String,
 	picture: String,
@@ -27,7 +28,30 @@ var eventSchema = new Schema({
 		picture: String,
 		text: String
 	}]
-
 });
 
-module.exports = mongoose.model('event', eventSchema);
+/**
+ * Pre-save hook
+ */
+EventSchema
+	.pre('save', function(next) {
+		var self = this;
+		self.constructor
+		.findOne()
+		.sort('-id')
+		.exec(function (err, member) {
+			console.log("err");
+			console.log("last event");
+			console.log(member);
+			if (!member) {
+				self.id = 568;
+			} else {
+				self.id = member.id + 1;
+			}
+			console.log("now event id");
+			console.log(self.id);
+			next();
+		});
+	});
+
+module.exports = mongoose.model('event', EventSchema);

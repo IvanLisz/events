@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('events')
+angular.module('events.landing')
 .config(function ($stateProvider) {
 	$stateProvider
 	.state('main', {
