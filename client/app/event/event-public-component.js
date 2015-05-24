@@ -25,7 +25,8 @@
 			restrict: 'E',
 			templateUrl: 'app/event/event-public.html',
 			scope: {
-				'event': '='
+				'event': '=',
+				'participation': '='
 			},
 			controller: eventPublicPageController,
 			controllerAs: 'ctrl',
@@ -44,14 +45,25 @@
 	function eventPublicPageController ($state, Event) {
 		/*jshint validthis: true */
 		var ctrl = this;
-		console.log(ctrl.event);
+
 		if (!ctrl.event) {
 			$state.go('landing');
 		}
+
 		ctrl.event.join = function () {
 			Event.join($state.params.id).then(
 			function (){
 				$state.go('event', {'id': $state.params.id});
+			},
+			function (err) {
+				console.log(err);
+			});
+		};
+
+		ctrl.event.leave = function () {
+			Event.leave($state.params.id).then(
+			function (){
+
 			},
 			function (err) {
 				console.log(err);

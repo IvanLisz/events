@@ -23,7 +23,8 @@
 		return {
 			get: get,
 			searchByName: searchByName,
-			join: join
+			join: join,
+			leave: leave
 		};
 
 		///////////////////////////////////////////
@@ -88,6 +89,28 @@
 			var deferred = $q.defer();
 
 			$http.post('api/events/' + id + '/join').
+			success(function (data) {
+				deferred.resolve(data);
+			}).
+			error(function (err) {
+				deferred.reject(err);
+			});
+
+			return deferred.promise;
+		}
+
+		/**
+		 * @ngdoc method
+		 * @name leave
+		 * @methodOf events.event.factory:Event
+		 *
+		 * @description
+		 * TODO: leave description
+		*/
+		function leave (id) {
+			var deferred = $q.defer();
+
+			$http.post('api/events/' + id + '/leave').
 			success(function (data) {
 				deferred.resolve(data);
 			}).

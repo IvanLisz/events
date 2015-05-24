@@ -54,7 +54,7 @@ function create (req, res) {
 		if(err) { return _handleError(res, err); }
 		return res.json(201, event);
 	});
-};
+}
 
 // Updates an existing event in the DB.
 function update (req, res) {
@@ -71,8 +71,7 @@ function update (req, res) {
 			});
 		});
 	}
-
-};
+}
 
 // Deletes a event from the DB.
 function destroy (req, res) {
@@ -87,7 +86,7 @@ function destroy (req, res) {
 			});
 		});
 	}
-};
+}
 
 
 
@@ -168,7 +167,7 @@ function addParticipant (req, res) {
 			return res.send(200);
 		});
 	});
-};
+}
 
 
 function _removeUserFromEvent(user, eventID, callback){
@@ -235,9 +234,7 @@ function removeParticipant (req, res) {
 			return res.send(200);
 		})
 	});
-
-
-};
+}
 
 module.exports = {
 	index: index,

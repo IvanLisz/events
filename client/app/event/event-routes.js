@@ -5,11 +5,7 @@ angular.module('events.event')
 
 	checkParticipation.$inject = ['$state', 'Auth'];
 	function checkParticipation ($state, Auth) {
-		var userParticipation = Auth.getUserInEventStatus($state.params.id);
-		if (userParticipation) {
-			$state.go('event.private');
-		}
-		return userParticipation;
+		debugger;
 	}
 
 	getEvent.$inject = ['$stateParams', 'Event'];
@@ -19,15 +15,15 @@ angular.module('events.event')
 
 	$stateProvider
 	.state('event', {
-		url: '/event/{id}',
-		template: '<event-public-page event="::event"></event-public-page>',
-		controller: ['$scope', 'Event', function ($scope, Event) {
+		url: '/event/:id',
+		template: '<event-public-page event="::event" participation="::participation"></event-public-page>',
+		controller: ['$scope', '$state', 'Auth', 'Event', function ($scope, $state, Auth, Event) {
 			$scope.event = Event;
+			$scope.participation = Auth.getUserInEventStatus(Number($state.params.id)) || {};
 		}],
 		resolve: {
-			Participation: checkParticipation,
 			Event: getEvent
-		},
+		}
 	})
 
 	.state('event.private', {

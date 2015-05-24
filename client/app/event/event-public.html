@@ -13,5 +13,6 @@
 
 <div class="memories grid-4">
 	<i class="md-location-on"></i>{{ctrl.event.location}}
-	<md-button class="md-raised md-primary" ng-click="ctrl.event.join()">Participa</md-button>
+	<md-button class="md-raised md-primary" ng-click="ctrl.event.join()" ng-if="!ctrl.participation.role">Participa</md-button>
+	<md-button class="md-raised md-primary" ng-click="ctrl.event.leave()" ng-if="ctrl.participation.role == 'guest'">Salir</md-button>
 </div>
