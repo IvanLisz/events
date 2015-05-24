@@ -24,7 +24,7 @@ function index (req, res) {
 
 // Get a single event
 function show (req, res) {
-	Event.find({id: req.params.id}, function (err, event) {
+	Event.findOne({id: req.params.id}, function (err, event) {
 		if(err) { return _handleError(res, err); }
 		if(!event) { return res.send(404); }
 		return res.json(event);

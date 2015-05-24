@@ -3,7 +3,7 @@
 angular.module('events.landing')
 .config(function ($stateProvider) {
 	$stateProvider
-	.state('main', {
+	.state('landing', {
 		url: '/',
 		template: '<landing-page></landing-page>'
 	});

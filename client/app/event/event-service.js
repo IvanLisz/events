@@ -21,6 +21,7 @@
 		initialize();
 
 		return {
+			get: get,
 			searchByName: searchByName,
 			join: join
 		};
@@ -29,6 +30,28 @@
 
 		function initialize () {
 			console.log(globalServiceVariable);
+		}
+
+		/**
+		 * @ngdoc method
+		 * @name get
+		 * @methodOf events.event.factory:Event
+		 *
+		 * @description
+		 * TODO: get description
+		*/
+		function get (id) {
+			var deferred = $q.defer();
+
+			$http.get('api/events/' + id).
+			success(function (data) {
+				deferred.resolve(data);
+			}).
+			error(function (err) {
+				deferred.reject(err);
+			});
+
+			return deferred.promise;
 		}
 
 		/**

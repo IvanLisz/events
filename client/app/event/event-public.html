@@ -1,3 +1,17 @@
-Public
+<div class="banner">
+	<img src="http://blog.gaudena.com/wp-content/uploads/2012/10/Ring-portada.jpg">
+	<div class="info">
+		<h2>
+			{{ctrl.event.name}}
+		</h2>
+	</div>
+</div>
 
-<md-button class="md-raised md-primary" ng-click="ctrl.event.join()">Participa</md-button>
+<div class="memories grid-8">
+
+</div>
+
+<div class="memories grid-4">
+	<i class="md-location-on"></i>{{ctrl.event.location}}
+	<md-button class="md-raised md-primary" ng-click="ctrl.event.join()">Participa</md-button>
+</div>
