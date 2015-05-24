@@ -15,6 +15,7 @@ router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id', auth.isAuthenticated(),controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 router.post('/:id/join', auth.isAuthenticated(), controller.addParticipant);
+router.post('/:id/leave', auth.isAuthenticated(), controller.removeParticipant);
 
 
 module.exports = router;

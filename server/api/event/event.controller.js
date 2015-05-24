@@ -102,7 +102,7 @@ function _addEventToUser (user, eventID, callback){
 
 		userData = userData[0];
 
-		var index = userData.events.indexOf(eventID);
+		var index = userData.events.map(function (obj){ return obj.id }).indexOf(eventID);
 		if (index != -1){
 			return callback("User: Event is already in user", null);
 		}
@@ -201,12 +201,16 @@ function _removeEventFromUser(user, eventID, callback){
 		if(!userData) { return callback(null, null); }
 
 		userData = userData[0];
+		console.log(userData);
+		console.log(userData.events);
+		var index = userData.events.map(function (obj){ return obj.id }).indexOf(Number(eventID));
 
-		var index = userData.events.indexOf(eventID);
 		if (index == -1){
 			return callback("User: Event is not in user", null);
 		}
 		userData.events.splice(index, 1);
+
+		console.log(userData);
 
 		userData.save(function (err, doc) {
 			if(err) {
@@ -232,7 +236,7 @@ function removeParticipant (req, res) {
 			if (!doc){ return res.send(500); }
 
 			return res.send(200);
-		})
+		});
 	});
 }
 
