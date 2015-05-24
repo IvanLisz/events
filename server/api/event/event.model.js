@@ -16,7 +16,7 @@ var EventSchema = new Schema({
 	date: Number,
 	location: String,
 	participants: [{
-		id: String,
+		id: Number,
 		name: String,
 		picture: String,
 		memberType: String
@@ -36,6 +36,7 @@ var EventSchema = new Schema({
  */
 EventSchema
 	.pre('save', function(next) {
+		if (!this.isNew) return next();
 		var self = this;
 		self.constructor
 		.findOne()

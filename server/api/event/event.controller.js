@@ -96,64 +96,90 @@ function _handleError(res, err) {
 }
 
 
+function _addEventToUser (user, eventID, callback){
+	User.find({id: user.id}, function (err, userData) {
+		if (err) { return callback(err, null); }
+		if(!userData) { return callback(null, null); }
 
-// Updates an existing event in the DB.
-function addParticipant (req, res) {
-	var user = req.user;
+		userData = userData[0];
 
-	//console.log(req.user);
+		var index = userData.events.indexOf(eventID);
+		if (index != -1){
+			return callback("User: Event is already in user", null);
+		}
+		userData.events.push({id: eventID});
 
-	console.log(req.params.id);
+		userData.save(function (err, doc) {
+			if(err) {
+				console.log(err);
+				return callback(err, null);
+			}
+			return callback(null, doc)
+		});
+	}).limit(1);
+}
+
+function _addUserToEvent(user, eventID, callback){
 
 	var newParticipant = {
-		uid: user._id,
+		id: user.id,
 		name: user.name,
 		picture: user.picture,
 		memberType: "participant"
 	};
 
+	Event.find({id: eventID}, function (err, eventData) {
+		if (err) { return callback(err); }
+		if(!eventData) { return callback(null,null) }
 
-	Event.findOneAndUpdate({id: req.params.id}, {$push: {'participants': {$each: [newParticipant]}}}, {upsert:true}, function(err, event){
-		if (err) { return _handleError(res, err); }
-		if(!event) { return res.send(500); }
-		console.log('update user');
-		console.log(req.user._id);
-		User.findOneAndUpdate({ '_id': req.user._id }, {$push: {'events': req.params.id}}, {upsert:true}, function(err, user){
-		console.log('err');
-		console.log(err);
-		console.log('user');
-		console.log(user);
-			if (err) { return _handleError(res, err); }
-			if(!user) { return res.send(500); }
-		console.log('great');
-			return res.json(200);
+		eventData = eventData[0];
+
+		var index = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
+		if (index != -1){
+			return callback("Event: User already participating", null);
+		}
+		eventData.participants.push(newParticipant);
+
+		eventData.save(function (err, doc) {
+			if(err) {
+				console.log(err);
+				return callback(err, null);
+			}
+			//return res.json(200,doc);
+			return callback(null, doc);
 		});
-	});
-/*
-	Event.update({id: req.params.id}, function (err, event) {
-		if (err) { return _handleError(res, err); }
-		if(!event) { return res.send(404); }
-
-		console.log(event);
+	}).limit(1);
 
 
+}
 
-		if (!event.participants) {
-			event.participants = [];
+// Updates an existing event in the DB.
+function addParticipant (req, res) {
+	var user = req.user;
+	var eventID = req.params.id;
+
+	_addUserToEvent(user, eventID, function(err, doc){
+		if (err){
+			return _handleError(res, err);
+		}
+		if (!doc){
+			return res.send(500);
 		}
 
-
-
-		console.log(event);
-
-		event.save(function (err) {
-			if (err) {
-				console.log("err");
-				console.log(err);
-				return _handleError(res, err); }
-			return res.json(200, event);
+		_addEventToUser(user, eventID, function(err, doc){
+			if (err){
+				return _handleError(res, err);
+			}
+			if (!doc){
+				return res.send(500);
+			}
+			return res.send(200);
 		});
-	});*/
+	});
+
+
+
+
 };
 
 // Updates an existing event in the DB.

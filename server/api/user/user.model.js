@@ -6,6 +6,7 @@ var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
 
 var UserSchema = new Schema({
+	id: Number,
 	name: { type: String, required: true },
 	picture: String,
 	email: { type: String, lowercase: true, required: true  },
@@ -107,7 +108,23 @@ UserSchema
 		if (!validatePresenceOf(this.hashedPassword) && authTypes.indexOf(this.provider) === -1)
 			next(new Error('Invalid password'));
 		else
-			next();
+			var self = this;
+			self.constructor
+			.findOne()
+			.sort('-id')
+			.exec(function (err, member) {
+				console.log("err");
+				console.log("last event");
+				console.log(member);
+				if (!member) {
+					self.id = 1;
+				} else {
+					self.id = member.id + 1;
+				}
+				console.log("UID");
+				console.log(self.id);
+				next();
+			});
 	});
 
 /**

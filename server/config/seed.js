@@ -34,11 +34,12 @@ Event.find().remove(function() {
 		date: 1435191191230,
 		location: 'Buenos Aires, Argentina'
 	}
-	], 0)
+	])
 });
 
 User.find({}).remove(function() {
-	User.create({
+	createSeed(User, [
+	{
 		provider: 'local',
 		name: 'Test User',
 		email: 'test@test.com',
@@ -49,10 +50,14 @@ User.find({}).remove(function() {
 		name: 'Admin',
 		email: 'admin@admin.com',
 		password: 'admin'
-	}, function() {
-			console.log('finished populating users');
-		}
-	);
+	}, {
+		provider: 'local',
+		role: 'admin',
+		name: 'a',
+		email: 'a@a.com',
+		password: 'a'
+	}
+	]);
 });
 
 function createSeed (database, seeds, index) {
