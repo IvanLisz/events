@@ -37,9 +37,23 @@
 		}
 	}
 
-	eventPublicPageController.$inject = [];
+	eventPublicPageController.$inject = ['$state', 'Event'];
 
-	function eventPublicPageController () {
+	function eventPublicPageController ($state, Event) {
 		var ctrl = this;
+
+		ctrl.event = {
+			join: join
+		};
+
+		function join () {
+			Event.join($state.params.id).then(
+			function (){
+				$state.go('event', {'id': $state.params.id});
+			},
+			function (err) {
+				console.log(err);
+			});
+		}
 	}
 })();

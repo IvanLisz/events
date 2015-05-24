@@ -21,7 +21,8 @@
 		initialize();
 
 		return {
-			searchByName: searchByName
+			searchByName: searchByName,
+			join: join
 		};
 
 		///////////////////////////////////////////
@@ -42,6 +43,28 @@
 			var deferred = $q.defer();
 
 			$http.get('api/events/name/' + name).
+			success(function (data) {
+				deferred.resolve(data);
+			}).
+			error(function (err) {
+				deferred.reject(err);
+			});
+
+			return deferred.promise;
+		}
+
+		/**
+		 * @ngdoc method
+		 * @name join
+		 * @methodOf events.event.factory:Event
+		 *
+		 * @description
+		 * TODO: join description
+		*/
+		function join (id) {
+			var deferred = $q.defer();
+
+			$http.post('api/events/' + id + '/join').
 			success(function (data) {
 				deferred.resolve(data);
 			}).

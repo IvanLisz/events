@@ -12,6 +12,7 @@
 
 var _ = require('lodash');
 var Event = require('./event.model');
+var User = require('../user/user.model');
 
 // Get list of events
 function index (req, res) {
@@ -115,9 +116,16 @@ function addParticipant (req, res) {
 	Event.findOneAndUpdate({id: req.params.id}, {$push: {'participants': {$each: [newParticipant]}}}, {upsert:true}, function(err, event){
 		if (err) { return _handleError(res, err); }
 		if(!event) { return res.send(500); }
-		User.findOneAndUpdate({ '_id': req.user._id }, {$push: {'events': {$each: [req.params.id]}}}, {upsert:true}, function(err, user){
+		console.log('update user');
+		console.log(req.user._id);
+		User.findOneAndUpdate({ '_id': req.user._id }, {$push: {'events': req.params.id}}, {upsert:true}, function(err, user){
+		console.log('err');
+		console.log(err);
+		console.log('user');
+		console.log(user);
 			if (err) { return _handleError(res, err); }
 			if(!user) { return res.send(500); }
+		console.log('great');
 			return res.json(200);
 		});
 	});

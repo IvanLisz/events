@@ -53,7 +53,7 @@
 		}
 
 		function goToEvent (event) {
-			$state.go('event', {'id': event.originalObject.id});
+			$state.go('event', {'id': event.id});
 		}
 
 		/*
