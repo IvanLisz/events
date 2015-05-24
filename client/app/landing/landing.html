@@ -1,17 +1,23 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
+<ev-navbar></ev-navbar>
 
 <header class="hero-unit" id="banner">
 	<div class="container">
 		<h1>'Allo, 'Allo!</h1>
-		<angucomplete-alt
-			placeholder="Buscar eventos"
-			pause="400"
-			selected-object="ctrl.goToEvent"
-			remote-url="/api/events/name/"
-			remote-url-data-field="results"
-			title-field="name"
-			image-field="picture"
-			input-class="form-control form-control-small"/>
+		<md-autocomplete
+		md-autoselect="true"
+		md-search-text="ctrl.events.search"
+		md-items="item in ctrl.events.get(ctrl.events.search)"
+		md-selected-item-change="ctrl.selectedItemChange(item)"
+		md-item-text="item.name"
+		md-min-length="3"
+		placeholder="Buscar eventos">
+			<md-item-template>
+				<span md-highlight-text="ctrl.events.search" md-highlight-flags="^i">{{item.name}}</span>
+			</md-item-template>
+			<md-not-found>
+				No matches found for "{{ctrl.events.search}}".
+			</md-not-found>
+		</md-autocomplete>
 		<p class="lead">Kick-start your next web app with Angular Fullstack</p>
 		<img src="assets/images/yeoman.png" alt="I'm Yeoman">
 	</div>

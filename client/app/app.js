@@ -1,19 +1,15 @@
-'use strict';
-
 angular.module('events', [
 	'ngCookies',
 	'ngResource',
 	'ngSanitize',
+	'ngMaterial',
 	'btford.socket-io',
 	'ui.router',
-	'ui.bootstrap',
-
-	// Thirdpaty
-	'angucomplete-alt',
 
 	// Pages
 	'events.landing',
-	'events.event'
+	'events.event',
+	'events.navbar'
 ])
 	.config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 		$urlRouterProvider
@@ -63,3 +59,4 @@ angular.module('events', [
 // Modules
 angular.module('events.landing', ['events']);
 angular.module('events.event', ['events']);
+angular.module('events.navbar', ['events']);

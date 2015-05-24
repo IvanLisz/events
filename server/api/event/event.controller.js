@@ -15,13 +15,11 @@ var Event = require('./event.model');
 
 // Get list of events
 function index (req, res) {
-
 	Event.find(function (err, events) {
 		if(err) { return _handleError(res, err); }
 		return res.json(200, events);
 	});
-
-};
+}
 
 // Get a single event
 function show (req, res) {
@@ -30,18 +28,16 @@ function show (req, res) {
 		if(!event) { return res.send(404); }
 		return res.json(event);
 	});
-};
+}
 
 // Get a single event by name
 function showByName (req, res) {
 	Event.find({name: new RegExp(req.params.name, 'i')}, function (err, events) {
 		if(err) { return _handleError(res, err); }
 		if(!events) { return res.send(404); }
-		return res.json({
-			results: events
-		});
+		return res.json(events);
 	});
-};
+}
 
 // Creates a new event in the DB.
 function create (req, res) {

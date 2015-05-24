@@ -37,15 +37,24 @@
 		}
 	}
 
-	landingPageController.$inject = ['$state'];
+	landingPageController.$inject = ['$state', 'Event'];
 
-	function landingPageController ($state) {
+	function landingPageController ($state, Event) {
 		/*jshint validthis: true */
 		var ctrl = this;
 
-		ctrl.goToEvent = function (event) {
-			$state.go('event', {'id': event.originalObject.id});
+		ctrl.events = {
+			go: goToEvent,
+			get: getEvent,
 		};
+
+		function getEvent (search) {
+			return Event.searchByName(search);
+		}
+
+		function goToEvent (event) {
+			$state.go('event', {'id': event.originalObject.id});
+		}
 
 		/*
 
