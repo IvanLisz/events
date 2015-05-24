@@ -8,8 +8,9 @@
 var Event = require('../api/event/event.model');
 var User = require('../api/user/user.model');
 
-Event.find({}).remove(function() {
-	Event.create({
+Event.find().remove(function() {
+	createSeed(Event, [
+	{
 		name: 'evento 1',
 		description: 'evento peronista',
 		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
@@ -21,7 +22,6 @@ Event.find({}).remove(function() {
 		date: 1434191191230,
 		location: 'Buenos Aires, argentina'
 	},
-
 	{
 		name: 'evento de poder',
 		description: 'viene pele',
@@ -33,7 +33,8 @@ Event.find({}).remove(function() {
 		},
 		date: 1435191191230,
 		location: 'Buenos Aires, Argentina'
-	});
+	}
+	], 0)
 });
 
 User.find({}).remove(function() {
@@ -53,3 +54,18 @@ User.find({}).remove(function() {
 		}
 	);
 });
+
+function createSeed (database, seeds, index) {
+	if (!index) {
+		index = 0;
+	}
+	console.log(index);
+	console.log(seeds.length);
+	if (index >= seeds.length) {
+		return;
+	}
+	database.create(seeds[index]);
+	setTimeout(function() {
+		createSeed(database, seeds, index+1);
+	}, 1000);
+}

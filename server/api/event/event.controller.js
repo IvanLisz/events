@@ -98,26 +98,54 @@ function _handleError(res, err) {
 
 // Updates an existing event in the DB.
 function addParticipant (req, res) {
-	var userId = req.user._id;
+	var user = req.user;
 
-	req.body.participants.push({
-		id: userId,
-		name: req.user.name,
-		picture: req.user.picture,
+	//console.log(req.user);
+
+	console.log(req.params.id);
+
+	var newParticipant = {
+		uid: user._id,
+		name: user.name,
+		picture: user.picture,
 		memberType: "participant"
-	});
+	};
 
-	if(req.body._id) { delete req.body._id; }
 
-	Event.find({id: req.params.id}, function (err, event) {
+	Event.findOneAndUpdate({id: req.params.id}, {$push: {'participants': {$each: [newParticipant]}}}, {upsert:true}, function(err, event){
 		if (err) { return _handleError(res, err); }
-		if(!event) { return res.send(404); }
-		var updated = _.merge(event, req.body);
-		updated.save(function (err) {
+		if(!event) { return res.send(500); }
+		User.findOneAndUpdate({ '_id': req.user._id }, {$push: {'events': {$each: [req.params.id]}}}, {upsert:true}, function(err, user){
 			if (err) { return _handleError(res, err); }
-			return res.json(200, event);
+			if(!user) { return res.send(500); }
+			return res.json(200);
 		});
 	});
+/*
+	Event.update({id: req.params.id}, function (err, event) {
+		if (err) { return _handleError(res, err); }
+		if(!event) { return res.send(404); }
+
+		console.log(event);
+
+
+
+		if (!event.participants) {
+			event.participants = [];
+		}
+
+
+
+		console.log(event);
+
+		event.save(function (err) {
+			if (err) {
+				console.log("err");
+				console.log(err);
+				return _handleError(res, err); }
+			return res.json(200, event);
+		});
+	});*/
 };
 
 // Updates an existing event in the DB.
@@ -144,9 +172,6 @@ function removeParticipant (req, res) {
 	});
 
 };
-
-
-
 
 module.exports = {
 	index: index,

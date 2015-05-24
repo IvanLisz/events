@@ -16,7 +16,7 @@ var EventSchema = new Schema({
 	date: Number,
 	location: String,
 	participants: [{
-		id: Number,
+		id: String,
 		name: String,
 		picture: String,
 		memberType: String
@@ -24,6 +24,7 @@ var EventSchema = new Schema({
 	categories: [String],
 	quota: Number,
 	memories: [{
+		name: String,
 		provider: { type: String, required: true },
 		picture: String,
 		text: String
