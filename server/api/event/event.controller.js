@@ -47,7 +47,7 @@ function create (req, res) {
 		id: req.user._id,
 		name: req.user.name,
 		picture: req.user.picture,
-		memberType: "creator"});
+		role: "creator"});
 
 	newEvent.creation = Date.now();
 	newEvent.save(function (err, event) {

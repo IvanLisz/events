@@ -21,7 +21,7 @@ var UserSchema = new Schema({
 	location: String,
 	events: [{
 		id: { type: Number, default: 0 },
-		memberType: { type: String, default: 'participant'}
+		role: { type: String, default: 'guest'}
 	}]
 });
 
