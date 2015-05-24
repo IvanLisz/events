@@ -19,7 +19,7 @@ var EventSchema = new Schema({
 		id: Number,
 		name: String,
 		picture: String,
-		memberType: String
+		role: String
 	}],
 	categories: [String],
 	quota: Number,
