@@ -125,7 +125,7 @@ function _addUserToEvent(user, eventID, callback){
 		id: user.id,
 		name: user.name,
 		picture: user.picture,
-		memberType: "participant"
+		role: "guest"
 	};
 
 	Event.find({id: eventID}, function (err, eventData) {
