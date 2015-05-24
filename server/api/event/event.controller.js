@@ -145,7 +145,6 @@ function _addUserToEvent(user, eventID, callback){
 				console.log(err);
 				return callback(err, null);
 			}
-			//return res.json(200,doc);
 			return callback(null, doc);
 		});
 	}).limit(1);
@@ -159,51 +158,84 @@ function addParticipant (req, res) {
 	var eventID = req.params.id;
 
 	_addUserToEvent(user, eventID, function(err, doc){
-		if (err){
-			return _handleError(res, err);
-		}
-		if (!doc){
-			return res.send(500);
-		}
+		if (err){ return _handleError(res, err); }
+		if (!doc){ return res.send(500); }
 
 		_addEventToUser(user, eventID, function(err, doc){
-			if (err){
-				return _handleError(res, err);
-			}
-			if (!doc){
-				return res.send(500);
-			}
+			if (err){ return _handleError(res, err); }
+			if (!doc){ return res.send(500); }
+
 			return res.send(200);
 		});
 	});
-
-
-
-
 };
+
+
+function _removeUserFromEvent(user, eventID, callback){
+	Event.find({id: eventID}, function (err, eventData) {
+		if (err) { return callback(err); }
+		if(!eventData) { return callback(null,null) }
+
+		eventData = eventData[0];
+
+		var index = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
+		if (index == -1){
+			return callback("Event: User is not participating", null);
+		}
+
+		eventData.participants.splice(index, 1);
+
+		eventData.save(function (err, doc) {
+			if(err) {
+				console.log(err);
+				return callback(err, null);
+			}
+			return callback(null, doc);
+		});
+	}).limit(1);
+
+}
+
+function _removeEventFromUser(user, eventID, callback){
+	User.find({id: user.id}, function (err, userData) {
+		if (err) { return callback(err, null); }
+		if(!userData) { return callback(null, null); }
+
+		userData = userData[0];
+
+		var index = userData.events.indexOf(eventID);
+		if (index == -1){
+			return callback("User: Event is not in user", null);
+		}
+		userData.events.splice(index, 1);
+
+		userData.save(function (err, doc) {
+			if(err) {
+				console.log(err);
+				return callback(err, null);
+			}
+			return callback(null, doc)
+		});
+	}).limit(1);
+}
 
 // Updates an existing event in the DB.
 function removeParticipant (req, res) {
-	var userId = req.user._id;
+	var user = req.user;
+	var eventID = req.params.id;
 
-	if(req.body._id) { delete req.body._id; }
-	Event.find({id: req.params.id}, function (err, event) {
-		if (err) { return _handleError(res, err); }
-		if(!event) { return res.send(404); }
-		var updated = _.merge(event, req.body);
+	_removeUserFromEvent(user, eventID, function (err, doc){
+		if (err){ return _handleError(res, err); }
+		if (!doc){ return res.send(500); }
 
-		var index = updated.participants.map(function (obj){ return obj.id }).indexOf(userId);
-		if (index == -1){
-			return res.send(404);
-		}
+		_removeEventFromUser(user, eventID, function (err, doc){
+			if (err){ return _handleError(res, err); }
+			if (!doc){ return res.send(500); }
 
-		updated.participants.splice(index, 1);
-
-		updated.save(function (err) {
-			if (err) { return _handleError(res, err); }
-			return res.json(200, event);
-		});
+			return res.send(200);
+		})
 	});
+
 
 };
 
