@@ -23,7 +23,7 @@ function index (req, res) {
 
 // Get a single event
 function show (req, res) {
-	Event.findById(req.params.id, function (err, event) {
+	Event.find({id: req.params.id}, function (err, event) {
 		if(err) { return _handleError(res, err); }
 		if(!event) { return res.send(404); }
 		return res.json(event);
@@ -60,7 +60,7 @@ function update (req, res) {
 	var userId = req.user._id;
 	if (userId == req.body.creator.id){
 		if(req.body._id) { delete req.body._id; }
-		Event.findById(req.params.id, function (err, event) {
+		Event.find({id: req.params.id}, function (err, event) {
 			if (err) { return _handleError(res, err); }
 			if(!event) { return res.send(404); }
 			var updated = _.merge(event, req.body);
@@ -77,7 +77,7 @@ function update (req, res) {
 function destroy (req, res) {
 	var userId = req.user._id;
 	if (userId == req.body.creator.id){
-		Event.findById(req.params.id, function (err, event) {
+		Event.find({id: req.params.id}, function (err, event) {
 			if(err) { return _handleError(res, err); }
 			if(!event) { return res.send(404); }
 			event.remove(function(err) {
@@ -109,7 +109,7 @@ function addParticipant (req, res) {
 
 	if(req.body._id) { delete req.body._id; }
 
-	Event.findById(req.params.id, function (err, event) {
+	Event.find({id: req.params.id}, function (err, event) {
 		if (err) { return _handleError(res, err); }
 		if(!event) { return res.send(404); }
 		var updated = _.merge(event, req.body);
@@ -125,7 +125,7 @@ function removeParticipant (req, res) {
 	var userId = req.user._id;
 
 	if(req.body._id) { delete req.body._id; }
-	Event.findById(req.params.id, function (err, event) {
+	Event.find({id: req.params.id}, function (err, event) {
 		if (err) { return _handleError(res, err); }
 		if(!event) { return res.send(404); }
 		var updated = _.merge(event, req.body);
