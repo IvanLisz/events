@@ -19,6 +19,7 @@ angular.module('events.event')
 		template: '<event-public-page event="::event" participation="::participation"></event-public-page>',
 		controller: ['$scope', '$state', 'Auth', 'Event', function ($scope, $state, Auth, Event) {
 			$scope.event = Event;
+			debugger;
 			$scope.participation = Auth.getUserInEventStatus(Number($state.params.id)) || {};
 		}],
 		resolve: {
