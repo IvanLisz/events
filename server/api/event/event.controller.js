@@ -16,13 +16,17 @@ var User = require('../user/user.model');
 
 // Get list of events
 function index (req, res) {
+	console.log('get list');
 	var page = req.query.page || 0;
+	console.log("page: " + page);
 	var limit = req.query.limit || 6;
+	console.log("limit: " + limit);
 	if (limit > 20){
 		limit = 20;
 	}
 
 	Event.find({"duration.end": {$gt: Date.now()}}, function (err, events) {
+	console.log(events);
 		if(err) { return _handleError(res, err); }
 		return res.json(200, events);
 	}).skip((page)*limit).limit(limit);

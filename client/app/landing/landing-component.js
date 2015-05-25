@@ -24,9 +24,7 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'app/landing/landing.html',
-			scope: {
-				events: '='
-			},
+			scope: {},
 			controller: landingPageController,
 			controllerAs: 'ctrl',
 			bindToController: true,
@@ -45,14 +43,15 @@
 		/*jshint validthis: true */
 		var ctrl = this;
 
-		var paginationPage = 1;
+		var paginationPage = 0;
 
 		ctrl.events = {
 			go: goToEvent,
 			get: getEvent,
 			paginate: getEventsByPagination,
-			data: ctrl.events,
-			bussy: false
+			data: [],
+			busy: false,
+			noMoreResults: false
 		};
 
 		function getEvent (search) {
@@ -64,35 +63,27 @@
 		}
 
 		function getEventsByPagination () {
-			if (ctrl.events.bussy) {
+			if (ctrl.events.busy) {
 				return;
 			}
-			ctrl.events.bussy = true;
+			ctrl.events.busy = true;
 
 			Event.get({ page: paginationPage }).then(
 				function (data) {
+					paginationPage++;
+					if (!data.length) {
+						ctrl.events.noMoreResults = true;
+					}
 					console.log('data');
 					console.log(data);
-					ctrl.data = ctrl.data.concat(data);
+					ctrl.events.data = ctrl.events.data.concat(data);
+					ctrl.events.busy = false;
 				},
 				function (err) {
 					// TODO, show error
+					ctrl.events.busy = false;
 				}
 			);
 		}
-
-		var Reddit = function() {
-			this.items = [];
-			this.busy = false;
-			this.after = '';
-		};
-
-		Reddit.prototype.nextPage = function () {
-			if (this.busy) {
-				return;
-			}
-			this.busy = true;
-
-		};
 	}
 })();

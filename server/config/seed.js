@@ -22,6 +22,138 @@ Event.find().remove(function() {
 		location: 'Buenos Aires, Argentina'
 	},
 	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento 1',
+		description: 'evento peronista',
+		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
+		creator: {
+			id: 2,
+			username: 'peron'
+		},
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
 		name: 'evento de poder',
 		description: 'viene pele',
 		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',

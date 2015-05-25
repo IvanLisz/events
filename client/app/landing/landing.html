@@ -19,6 +19,6 @@
 	</div>
 </div>
 
-<div class="events">
-	<ev-event-card class="grid-4" ng-repeat="event in ctrl.events.data"></ev-event-card>
+<div class="events" infinite-scroll='ctrl.events.paginate()' infinite-scroll-disabled='ctrl.events.busy || ctrl.events.noMoreResults' infinite-scroll-distance='1'>
+	<ev-event-card class="grid-4" ng-repeat="event in ctrl.events.data" event="event"></ev-event-card>
 </div>

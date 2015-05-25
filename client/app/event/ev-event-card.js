@@ -43,6 +43,6 @@
 
 	function evEventCardController () {
 		var ctrl = this;
-
+		console.log(ctrl.event);
 	}
 })();

@@ -15,5 +15,10 @@ angular.module('events.event')
 				return Event.search($stateParams.id);
 			}]
 		}
+	})
+	.state('create', {
+		url: '/create',
+		template: '<create-event-page></create-event-page>',
+		authenticate: true
 	});
 });
