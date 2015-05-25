@@ -30,21 +30,21 @@ function index (req, res) {
 		case 'next':
 			_findNextEvents(page, limit, function (err, nextEvents){
 				if(err) { return _handleError(res, err) }
-				return res.json(200, nextEvents);
+				return res.json(200, { data: nextEvents });
 			});
 		break;
 
 		case 'now':
 			_findCurrentEvents(page, limit, function (err, currentEvents){
 				if(err) { return _handleError(res, err) }
-				return res.json(200, currentEvents);
+				return res.json(200, { data: currentEvents });
 			});
 		break;
 
 		case 'old':
 			_findOldEvents(page, limit, function (err, oldEvents){
 				if(err) { return _handleError(res, err) }
-				return res.json(200, oldEvents);
+				return res.json(200, { data: oldEvents });
 			});
 		break;
 
@@ -52,17 +52,17 @@ function index (req, res) {
 			_findCurrentEvents(page, limit, function (err, currentEvents){
 				if(err) { return _handleError(res, err) }
 				if (currentEvents.length >= 6) {
-					return res.json(200, currentEvents);
+					return res.json(200, { data: currentEvents });
 				}else{
 					_findNextEvents(0, limit - currentEvents.length, function (err, nextEvents){
 						if(err) { return _handleError(res, err) }
 						var sendEvents = currentEvents.concat(nextEvents);
 						if (sendEvents.length >= 6) {
-							return res.json(200, sendEvents);
+							return res.json(200, { data: sendEvents, lastResults: true });
 						}else{
 							_findOldEvents(0, limit - sendEvents.length, function (err, oldEvents){
 								sendEvents = sendEvents.concat(oldEvents);
-								return res.json(200, sendEvents);
+								return res.json(200, { data: sendEvents, lastResults: true });
 							})
 						}
 

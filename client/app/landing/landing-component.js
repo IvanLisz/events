@@ -69,14 +69,15 @@
 			ctrl.events.busy = true;
 
 			Event.get({ page: paginationPage }).then(
-				function (data) {
+				function (response) {
 					paginationPage++;
-					if (!data.length) {
+					if (!response.data.length) {
 						ctrl.events.noMoreResults = true;
 					}
-					console.log('data');
-					console.log(data);
-					ctrl.events.data = ctrl.events.data.concat(data);
+					console.log('response.data');
+					console.log(response.data);
+					ctrl.events.data = ctrl.events.data.concat(response.data);
+					ctrl.events.noMoreResults = response.lastResults;
 					ctrl.events.busy = false;
 				},
 				function (err) {
