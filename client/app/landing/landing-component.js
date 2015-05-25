@@ -24,7 +24,9 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'app/landing/landing.html',
-			scope: {},
+			scope: {
+				events: '='
+			},
 			controller: landingPageController,
 			controllerAs: 'ctrl',
 			bindToController: true,
@@ -43,9 +45,14 @@
 		/*jshint validthis: true */
 		var ctrl = this;
 
+		var paginationPage = 1;
+
 		ctrl.events = {
 			go: goToEvent,
 			get: getEvent,
+			paginate: getEventsByPagination,
+			data: ctrl.events,
+			bussy: false
 		};
 
 		function getEvent (search) {
@@ -56,31 +63,36 @@
 			$state.go('event', {'id': event.id});
 		}
 
-		/*
-
-		$scope.awesomeThings = [];
-
-		$http.get('/api/things').success(function(awesomeThings) {
-			$scope.awesomeThings = awesomeThings;
-			socket.syncUpdates('thing', $scope.awesomeThings);
-		});
-
-		$scope.addThing = function() {
-			if($scope.newThing === '') {
+		function getEventsByPagination () {
+			if (ctrl.events.bussy) {
 				return;
 			}
-			$http.post('/api/things', { name: $scope.newThing });
-			$scope.newThing = '';
+			ctrl.events.bussy = true;
+
+			Event.get({ page: paginationPage }).then(
+				function (data) {
+					console.log('data');
+					console.log(data);
+					ctrl.data = ctrl.data.concat(data);
+				},
+				function (err) {
+					// TODO, show error
+				}
+			);
+		}
+
+		var Reddit = function() {
+			this.items = [];
+			this.busy = false;
+			this.after = '';
 		};
 
-		$scope.deleteThing = function(thing) {
-			$http.delete('/api/things/' + thing._id);
+		Reddit.prototype.nextPage = function () {
+			if (this.busy) {
+				return;
+			}
+			this.busy = true;
+
 		};
-
-		$scope.$on('$destroy', function () {
-			socket.unsyncUpdates('thing');
-		});
-
-*/
 	}
 })();

@@ -5,6 +5,14 @@ angular.module('events.landing')
 	$stateProvider
 	.state('landing', {
 		url: '/',
-		template: '<landing-page></landing-page>'
+		template: '<landing-page events="events"></landing-page>',
+		controller: ['$scope', 'Events', function ($scope, Events){
+			$scope.events = Events;
+		}],
+		resolve: {
+			Events: ['Event', function(Event) {
+				Event.get();
+			}]
+		}
 	});
 });

@@ -1,16 +1,24 @@
-<h1>Buscá una nueva aventura!</h1>
-<md-autocomplete
-md-autoselect="true"
-md-search-text="ctrl.events.search"
-md-items="item in ctrl.events.get(ctrl.events.search)"
-md-selected-item-change="ctrl.events.go(item)"
-md-item-text="item.name"
-md-min-length="3"
-placeholder="Buscar eventos">
-	<md-item-template>
-		<span md-highlight-text="ctrl.events.search" md-highlight-flags="^i">{{item.name}}</span>
-	</md-item-template>
-	<md-not-found>
-		No matches found for "{{ctrl.events.search}}".
-	</md-not-found>
-</md-autocomplete>
+<div class="banner">
+	<div>
+		<h1>Buscá una nueva aventura!</h1>
+		<md-autocomplete
+		md-autoselect="true"
+		md-search-text="ctrl.events.search"
+		md-items="item in ctrl.events.get(ctrl.events.search)"
+		md-selected-item-change="ctrl.events.go(item)"
+		md-item-text="item.name"
+		md-min-length="3"
+		placeholder="Buscar eventos">
+			<md-item-template>
+				<span md-highlight-text="ctrl.events.search" md-highlight-flags="^i">{{item.name}}</span>
+			</md-item-template>
+			<md-not-found>
+				No matches found for "{{ctrl.events.search}}".
+			</md-not-found>
+		</md-autocomplete>
+	</div>
+</div>
+
+<div class="events">
+	<ev-event-card class="grid-4" ng-repeat="event in ctrl.events.data"></ev-event-card>
+</div>

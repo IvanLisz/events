@@ -7,6 +7,21 @@ angular.module('events')
       currentUser = User.get();
     }
 
+    function isLoggedIn (cb) {
+      if (!cb) { cb = angular.noop; }
+      if(currentUser.hasOwnProperty('$promise')) {
+        currentUser.$promise.then(function() {
+          cb(true);
+        }).catch(function() {
+          cb(false);
+        });
+      } else if(currentUser.hasOwnProperty('role')) {
+        cb(true);
+      } else {
+        cb(false);
+      }
+    }
+
     return {
 
       /**
@@ -92,48 +107,24 @@ angular.module('events')
         }).$promise;
       },
 
+      /*
+      * Check if a user is logged in
+      * @return {Boolean}
+      *
+      */
+      isLoggedIn: isLoggedIn,
+
       /**
        * Gets all available info on authenticated user
        *
        * @return {Object} user
        */
       getCurrentUser: function() {
-        return currentUser;
-      },
-
-      /**
-       * Check if a user is logged in
-       *
-       * @return {Boolean}
-       */
-      isLoggedIn: function() {
-        return currentUser.hasOwnProperty('role');
-      },
-
-      /**
-       * Waits for currentUser to resolve before checking if user is logged in
-       */
-      isLoggedInAsync: function(cb) {
-        if(currentUser.hasOwnProperty('$promise')) {
-          currentUser.$promise.then(function() {
-            cb(true);
-          }).catch(function() {
-            cb(false);
-          });
-        } else if(currentUser.hasOwnProperty('role')) {
-          cb(true);
-        } else {
-          cb(false);
-        }
-      },
-
-      getUserInEventStatus: function(eventId) {
-        if (!currentUser.hasOwnProperty('role')) {
-          return false;
-        }
-        return currentUser.events.filter(function (event){
-          return event.id === eventId;
-        })[0];
+        var deferred = $q.defer();
+        isLoggedIn(function (){
+          deferred.resolve(currentUser);
+        });
+        return deferred.promise;
       },
 
       /**

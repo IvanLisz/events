@@ -94,7 +94,6 @@ function _handleError(res, err) {
 	return res.send(500, err);
 }
 
-
 function _addEventToUser (user, eventID, callback){
 	User.find({id: user.id}, function (err, userData) {
 		if (err) { return callback(err, null); }
@@ -103,17 +102,17 @@ function _addEventToUser (user, eventID, callback){
 		userData = userData[0];
 
 		var index = userData.events.indexOf(eventID);
-		if (index != -1){
+		if (index !== -1) {
 			return callback("User: Event is already in user", null);
 		}
 		userData.events.push({id: eventID});
 
-		userData.save(function (err, doc) {
+		userData.save(function (err, newUser) {
 			if(err) {
 				console.log(err);
 				return callback(err, null);
 			}
-			return callback(null, doc)
+			return callback(null, newUser)
 		});
 	}).limit(1);
 }
@@ -156,15 +155,14 @@ function addParticipant (req, res) {
 	var user = req.user;
 	var eventID = req.params.id;
 
-	_addUserToEvent(user, eventID, function(err, doc){
+	_addUserToEvent(user, eventID, function(err, newEvent){
 		if (err){ return _handleError(res, err); }
-		if (!doc){ return res.send(500); }
+		if (!newEvent){ return res.send(500); }
 
-		_addEventToUser(user, eventID, function(err, doc){
+		_addEventToUser(user, eventID, function(err, newUser){
 			if (err){ return _handleError(res, err); }
-			if (!doc){ return res.send(500); }
-
-			return res.send(200);
+			if (!newUser){ return res.send(500); }
+			return res.send(200, eventID);
 		});
 	});
 }
@@ -178,7 +176,7 @@ function _removeUserFromEvent(user, eventID, callback){
 		eventData = eventData[0];
 
 		var index = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
-		if (index == -1){
+		if (index === -1) {
 			return callback("Event: User is not participating", null);
 		}
 
@@ -203,7 +201,7 @@ function _removeEventFromUser(user, eventID, callback){
 		userData = userData[0];
 
 		var index = userData.events.indexOf(eventID);
-		if (index == -1){
+		if (index === -1) {
 			return callback("User: Event is not in user", null);
 		}
 		userData.events.splice(index, 1);

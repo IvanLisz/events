@@ -16,22 +16,16 @@
 	EventService.$inject = ['$http', '$q'];
 
 	function EventService ($http, $q) {
-		var globalServiceVariable;
-
-		initialize();
 
 		return {
 			get: get,
+			search: search,
 			searchByName: searchByName,
 			join: join,
 			leave: leave
 		};
 
 		///////////////////////////////////////////
-
-		function initialize () {
-			console.log(globalServiceVariable);
-		}
 
 		/**
 		 * @ngdoc method
@@ -41,7 +35,29 @@
 		 * @description
 		 * TODO: get description
 		*/
-		function get (id) {
+		function get (params) {
+			var deferred = $q.defer();
+
+			$http.get('api/events', { params: params }).
+			success(function (data) {
+				deferred.resolve(data);
+			}).
+			error(function (err) {
+				deferred.reject(err);
+			});
+
+			return deferred.promise;
+		}
+
+		/**
+		 * @ngdoc method
+		 * @name search
+		 * @methodOf events.event.factory:Event
+		 *
+		 * @description
+		 * TODO: search description
+		*/
+		function search (id) {
 			var deferred = $q.defer();
 
 			$http.get('api/events/' + id).
