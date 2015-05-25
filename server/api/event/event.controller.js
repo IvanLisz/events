@@ -17,6 +17,7 @@ var User = require('../user/user.model');
 // Get list of events
 function index (req, res) {
 	console.log('get list');
+	var type = req.query.date || null;
 	var page = req.query.page || 0;
 	console.log("page: " + page);
 	var limit = req.query.limit || 6;
@@ -25,11 +26,72 @@ function index (req, res) {
 		limit = 20;
 	}
 
-	Event.find({"duration.end": {$gt: Date.now()}}, function (err, events) {
-	console.log(events);
-		if(err) { return _handleError(res, err); }
-		return res.json(200, events);
-	}).skip((page)*limit).limit(limit);
+	switch (type) {
+		case 'next':
+			_findNextEvents(page, limit, function (err, nextEvents){
+				if(err) { return _handleError(res, err) }
+				return res.json(200, nextEvents);
+			});
+		break;
+
+		case 'now':
+			_findCurrentEvents(page, limit, function (err, currentEvents){
+				if(err) { return _handleError(res, err) }
+				return res.json(200, currentEvents);
+			});
+		break;
+
+		case 'old':
+			_findOldEvents(page, limit, function (err, oldEvents){
+				if(err) { return _handleError(res, err) }
+				return res.json(200, oldEvents);
+			});
+		break;
+
+		default:
+			_findCurrentEvents(page, limit, function (err, currentEvents){
+				if(err) { return _handleError(res, err) }
+				if (currentEvents.length >= 6) {
+					return res.json(200, currentEvents);
+				}else{
+					_findNextEvents(0, limit - currentEvents.length, function (err, nextEvents){
+						if(err) { return _handleError(res, err) }
+						var sendEvents = currentEvents.concat(nextEvents);
+						if (sendEvents.length >= 6) {
+							return res.json(200, sendEvents);
+						}else{
+							_findOldEvents(0, limit - sendEvents.length, function (err, oldEvents){
+								sendEvents = sendEvents.concat(oldEvents);
+								return res.json(200, sendEvents);
+							})
+						}
+
+					});
+				}
+			});
+		break;
+	}
+}
+
+function _findCurrentEvents(page, limit, callback){
+	Event.find({"duration.start": {$lt: Date.now()}, "duration.end": {$gt: Date.now()}}, function (err, currentEvents) {
+		if(err) { return callback(err, null);}
+		return callback(err, currentEvents);
+	}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
+}
+
+function _findNextEvents(page, limit, callback){
+	Event.find({"duration.start": {$gt: Date.now()}}, function (err, nextEvents) {
+		if(err) { return callback(err, null);}
+		return callback(err, nextEvents);
+	}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
+}
+
+function _findOldEvents(page, limit, callback){
+	Event.find({"duration.end": {$lt: Date.now()}}, function (err, oldEvents) {
+		if(err) { return callback(err, null);}
+		return callback(err, oldEvents);
+	}).skip((page)*limit).limit(limit).sort({"duration.end": -1});
 }
 
 // Get a single event
@@ -48,7 +110,7 @@ function showByName (req, res) {
 		res.send(500); // min 3 characters
 	}
 
-	var page = req.query.page || 1;
+	var page = req.query.page || 0;
 	var limit = req.query.limit || 6;
 	if (limit > 20){
 		limit = 20;
@@ -154,7 +216,7 @@ function _addUserToEvent(user, eventID, callback){
 		eventData = eventData[0];
 
 		var index = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
-		if (index != -1){
+		if (index !== -1){
 			return callback("Event: User already participating", null);
 		}
 		eventData.participants.push(newParticipant);
