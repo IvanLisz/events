@@ -16,28 +16,45 @@ var User = require('../user/user.model');
 
 // Get list of events
 function index (req, res) {
-	Event.find(function (err, events) {
+	var page = req.query.page || 0;
+	var limit = req.query.limit || 6;
+	if (limit > 20){
+		limit = 20;
+	}
+
+	Event.find({"duration.end": {$gt: Date.now()}}, function (err, events) {
 		if(err) { return _handleError(res, err); }
 		return res.json(200, events);
-	});
+	}).skip((page)*limit).limit(limit);
 }
 
 // Get a single event
 function show (req, res) {
-	Event.findOne({id: req.params.id}, function (err, event) {
+	Event.find({id: req.params.id}, function (err, event) {
 		if(err) { return _handleError(res, err); }
 		if(!event) { return res.send(404); }
+		event = event[0];
 		return res.json(event);
-	});
+	}).limit(1);
 }
 
 // Get a single event by name
 function showByName (req, res) {
-	Event.find({name: new RegExp(req.params.name, 'i')}, function (err, events) {
+	if (req.params.name.length < 3){
+		res.send(500); // min 3 characters
+	}
+
+	var page = req.query.page || 1;
+	var limit = req.query.limit || 6;
+	if (limit > 20){
+		limit = 20;
+	}
+
+	Event.find({name: new RegExp(req.params.name, 'i')},  function (err, events) {
 		if(err) { return _handleError(res, err); }
 		if(!events) { return res.send(404); }
 		return res.json(events);
-	});
+	}).skip((page)*limit).limit(limit);
 }
 
 // Creates a new event in the DB.
@@ -101,8 +118,8 @@ function _addEventToUser (user, eventID, callback){
 
 		userData = userData[0];
 
-		var index = userData.events.indexOf(eventID);
-		if (index !== -1) {
+		var index = userData.events.map(function (obj){ return obj.id }).indexOf(eventID);
+		if (index !== -1){
 			return callback("User: Event is already in user", null);
 		}
 		userData.events.push({id: eventID});
@@ -143,7 +160,7 @@ function _addUserToEvent(user, eventID, callback){
 				console.log(err);
 				return callback(err, null);
 			}
-			return callback(null, doc);
+			return callback(null, newParticipant);
 		});
 	}).limit(1);
 
@@ -155,14 +172,14 @@ function addParticipant (req, res) {
 	var user = req.user;
 	var eventID = req.params.id;
 
-	_addUserToEvent(user, eventID, function(err, newEvent){
+	_addEventToUser(user, eventID, function(err, newUser){
 		if (err){ return _handleError(res, err); }
-		if (!newEvent){ return res.send(500); }
+		if (!newUser){ return res.send(500); }
 
-		_addEventToUser(user, eventID, function(err, newUser){
+		_addUserToEvent(user, eventID, function(err, newEvent){
 			if (err){ return _handleError(res, err); }
-			if (!newUser){ return res.send(500); }
-			return res.send(200, eventID);
+			if (!newEvent){ return res.send(500); }
+			return res.json(200, newEvent);
 		});
 	});
 }
@@ -199,12 +216,15 @@ function _removeEventFromUser(user, eventID, callback){
 		if(!userData) { return callback(null, null); }
 
 		userData = userData[0];
-
-		var index = userData.events.indexOf(eventID);
+		console.log(userData);
+		console.log(userData.events);
+		var index = userData.events.map(function (obj){ return obj.id }).indexOf(Number(eventID));
 		if (index === -1) {
 			return callback("User: Event is not in user", null);
 		}
 		userData.events.splice(index, 1);
+
+		console.log(userData);
 
 		userData.save(function (err, doc) {
 			if(err) {
@@ -230,7 +250,7 @@ function removeParticipant (req, res) {
 			if (!doc){ return res.send(500); }
 
 			return res.send(200);
-		})
+		});
 	});
 }
 
