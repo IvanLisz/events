@@ -5,8 +5,8 @@
 
 'use strict';
 
-var Event = require('../api/event/event.model');
-var User = require('../api/user/user.model');
+var Event 	= require('../api/event/event.model'),
+	User 	= require('../api/user/user.model');
 
 Event.find().remove(function() {
 	createSeed(Event, [
@@ -63,6 +63,17 @@ Event.find().remove(function() {
 			username: 'pele'
 		},
 		duration: {start: Date.now()- 86400000 * 4, end: Date.now() - 86400000 * 2},
+		location: 'Buenos Aires, Argentina'
+	},
+	{
+		name: 'evento mucho mas viejo',
+		description: 'viene pele',
+		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',
+		creator: {
+			id: 1,
+			username: 'pele'
+		},
+		duration: {start: Date.now()- 86400000 * 6, end: Date.now() - 86400000 * 3},
 		location: 'Buenos Aires, Argentina'
 	}
 	])

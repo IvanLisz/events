@@ -10,20 +10,21 @@
 
 'use strict';
 
-var _ = require('lodash');
-var Event = require('./event.model');
-var User = require('../user/user.model');
+var _ 		= require('lodash'),
+	Event 	= require('./event.model'),
+	User 	= require('../user/user.model'),
+	gConfig = require('../../config/global-variables.js');
 
 // Get list of events
 function index (req, res) {
 	console.log('get list');
 	var type = req.query.date || null;
-	var page = req.query.page || 0;
+	var page = req.query.page || gConfig.pagination.defaultPage;
 	console.log("page: " + page);
-	var limit = req.query.limit || 6;
+	var limit = req.query.limit || gConfig.pagination.defaultLimit;
 	console.log("limit: " + limit);
-	if (limit > 20){
-		limit = 20;
+	if (limit > gConfig.pagination.maxLimit){
+		limit = gConfig.pagination.maxLimit;
 	}
 
 	switch (type) {
@@ -110,17 +111,28 @@ function showByName (req, res) {
 		res.send(500); // min 3 characters
 	}
 
-	var page = req.query.page || 0;
-	var limit = req.query.limit || 6;
-	if (limit > 20){
-		limit = 20;
+	var page = req.query.page || gConfig.pagination.defaultPage;
+	var limit = req.query.limit || gConfig.pagination.defaultLimit;
+	if (limit > gConfig.pagination.maxLimit){
+		limit = gConfig.pagination.maxLimit;
 	}
 
-	Event.find({name: new RegExp(req.params.name, 'i')},  function (err, events) {
+
+
+
+	Event.find({name: new RegExp(req.params.name, 'i'), "duration.end": {$gt: Date.now()}},  function (err, currentAndNextEvents) {
 		if(err) { return _handleError(res, err); }
-		if(!events) { return res.send(404); }
-		return res.json(events);
-	}).skip((page)*limit).limit(limit);
+		if(!currentAndNextEvents) { return res.send(404); }
+		if (currentAndNextEvents.length >= 6) {
+			return res.json(200, currentAndNextEvents);
+		} else {
+			Event.find({name: new RegExp(req.params.name, 'i'), "duration.end": {$lt: Date.now()}},  function (err, oldEvents) {
+				if(!oldEvents) { return res.send(404); }
+				var sendEvents = currentAndNextEvents.concat(oldEvents);
+				return res.json(200, sendEvents);
+			}).limit(limit - currentAndNextEvents.length);
+		}
+	}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
 }
 
 // Creates a new event in the DB.
