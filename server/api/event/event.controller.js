@@ -33,11 +33,18 @@ function show (req, res) {
 
 // Get a single event by name
 function showByName (req, res) {
-	Event.find({name: new RegExp(req.params.name, 'i')}, function (err, events) {
+
+	var page = req.params.page || 1;
+	var limit = req.params.limit || 5;
+	if (limit > 20){
+		limit = 20;
+	}
+
+	Event.find({name: new RegExp(req.params.name, 'i')},  function (err, events) {
 		if(err) { return _handleError(res, err); }
 		if(!events) { return res.send(404); }
 		return res.json(events);
-	});
+	}).skip((page-1)*limit).limit(limit);
 }
 
 // Creates a new event in the DB.
@@ -144,7 +151,7 @@ function _addUserToEvent(user, eventID, callback){
 				console.log(err);
 				return callback(err, null);
 			}
-			return callback(null, doc);
+			return callback(null, newParticipant);
 		});
 	}).limit(1);
 
@@ -156,15 +163,14 @@ function addParticipant (req, res) {
 	var user = req.user;
 	var eventID = req.params.id;
 
-	_addUserToEvent(user, eventID, function(err, doc){
+	_addEventToUser(user, eventID, function(err, doc){
 		if (err){ return _handleError(res, err); }
 		if (!doc){ return res.send(500); }
 
-		_addEventToUser(user, eventID, function(err, doc){
+		_addUserToEvent(user, eventID, function(err, doc){
 			if (err){ return _handleError(res, err); }
 			if (!doc){ return res.send(500); }
-
-			return res.send(200);
+			return res.json(200, doc);
 		});
 	});
 }
