@@ -9,6 +9,7 @@ angular.module('events', [
 	'ui.router',
 
 	// Pages
+	'events.login',
 	'events.landing',
 	'events.event',
 	'events.navbar',
@@ -62,6 +63,7 @@ angular.module('events', [
 	});
 
 // Modules
+angular.module('events.login', ['events']);
 angular.module('events.landing', ['events']);
 angular.module('events.event', ['events']);
 angular.module('events.navbar', ['events']);
