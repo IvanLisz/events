@@ -16,26 +16,36 @@ var User = require('../user/user.model');
 
 // Get list of events
 function index (req, res) {
-	Event.find(function (err, events) {
+	var page = req.query.page || 0;
+	var limit = req.query.limit || 6;
+	if (limit > 20){
+		limit = 20;
+	}
+
+	Event.find({"duration.end": {$gt: Date.now()}}, function (err, events) {
 		if(err) { return _handleError(res, err); }
 		return res.json(200, events);
-	});
+	}).skip((page)*limit).limit(limit);
 }
 
 // Get a single event
 function show (req, res) {
-	Event.findOne({id: req.params.id}, function (err, event) {
+	Event.find({id: req.params.id}, function (err, event) {
 		if(err) { return _handleError(res, err); }
 		if(!event) { return res.send(404); }
+		event = event[0];
 		return res.json(event);
-	});
+	}).limit(1);
 }
 
 // Get a single event by name
 function showByName (req, res) {
+	if (req.params.name.length < 3){
+		res.send(500); // min 3 characters
+	}
 
-	var page = req.params.page || 1;
-	var limit = req.params.limit || 5;
+	var page = req.query.page || 1;
+	var limit = req.query.limit || 6;
 	if (limit > 20){
 		limit = 20;
 	}
@@ -44,7 +54,7 @@ function showByName (req, res) {
 		if(err) { return _handleError(res, err); }
 		if(!events) { return res.send(404); }
 		return res.json(events);
-	}).skip((page-1)*limit).limit(limit);
+	}).skip((page)*limit).limit(limit);
 }
 
 // Creates a new event in the DB.

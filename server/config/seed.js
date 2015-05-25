@@ -14,24 +14,22 @@ Event.find().remove(function() {
 		name: 'evento 1',
 		description: 'evento peronista',
 		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
-		creation: 1432191191230,
 		creator: {
 			id: 2,
 			username: 'peron'
 		},
-		date: 1434191191230,
-		location: 'Buenos Aires, argentina'
+		duration: {start: Date.now(), end: Date.now() + 86400000},
+		location: 'Buenos Aires, Argentina'
 	},
 	{
 		name: 'evento de poder',
 		description: 'viene pele',
 		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',
-		creation: 1432191191230,
 		creator: {
 			id: 1,
 			username: 'pele'
 		},
-		date: 1435191191230,
+		duration: {start: Date.now()- 86400000 * 3 , end: Date.now() - 86400000 },
 		location: 'Buenos Aires, Argentina'
 	}
 	])
@@ -72,5 +70,5 @@ function createSeed (database, seeds, index) {
 	database.create(seeds[index]);
 	setTimeout(function() {
 		createSeed(database, seeds, index+1);
-	}, 1000);
+	}, 100);
 }

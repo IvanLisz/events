@@ -10,8 +10,6 @@ var router = express.Router();
 router.get('/', controller.index);
 router.get('/:id', controller.show);
 router.get('/name/:name', controller.showByName);
-router.get('/name/:name/:page', controller.showByName);
-router.get('/name/:name/:page/:limit', controller.showByName);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id', auth.isAuthenticated(),controller.update);
