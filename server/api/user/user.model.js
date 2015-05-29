@@ -22,7 +22,8 @@ var UserSchema = new Schema({
 	events: [{
 		id: { type: Number, default: 0 },
 		role: { type: String, default: 'guest'}
-	}]
+	}],
+	favorites: [Number]
 });
 
 /**

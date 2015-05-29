@@ -20,9 +20,8 @@ function index (req, res) {
 	console.log('get list');
 	var type = req.query.date || null;
 	var page = req.query.page || gConfig.pagination.defaultPage;
-	console.log("page: " + page);
 	var limit = req.query.limit || gConfig.pagination.defaultLimit;
-	console.log("limit: " + limit);
+
 	if (limit > gConfig.pagination.maxLimit){
 		limit = gConfig.pagination.maxLimit;
 	}
@@ -52,13 +51,15 @@ function index (req, res) {
 		default:
 			_findCurrentEvents(page, limit, function (err, currentEvents){
 				if(err) { return _handleError(res, err) }
-				if (currentEvents.length >= 6) {
+
+				if (currentEvents.length >= gConfig.pagination.defaultLimit) {
 					return res.json(200, { data: currentEvents });
 				}else{
 					_findNextEvents(0, limit - currentEvents.length, function (err, nextEvents){
 						if(err) { return _handleError(res, err) }
 						var sendEvents = currentEvents.concat(nextEvents);
-						if (sendEvents.length >= 6) {
+
+						if (sendEvents.length >= gConfig.pagination.defaultLimit) {
 							return res.json(200, { data: sendEvents, lastResults: true });
 						}else{
 							_findOldEvents(0, limit - sendEvents.length, function (err, oldEvents){
@@ -113,26 +114,36 @@ function showByName (req, res) {
 
 	var page = req.query.page || gConfig.pagination.defaultPage;
 	var limit = req.query.limit || gConfig.pagination.defaultLimit;
+
+	var start = req.query.start || null;
+	var end = req.query.end || 999999999999999; // es re villero ya se
+
+
 	if (limit > gConfig.pagination.maxLimit){
 		limit = gConfig.pagination.maxLimit;
 	}
 
-
-
-
-	Event.find({name: new RegExp(req.params.name, 'i'), "duration.end": {$gt: Date.now()}},  function (err, currentAndNextEvents) {
-		if(err) { return _handleError(res, err); }
-		if(!currentAndNextEvents) { return res.send(404); }
-		if (currentAndNextEvents.length >= 6) {
+	if (!start || !end){
+		Event.find({name: new RegExp(req.params.name, 'i'), "duration.end": {$gt: Date.now() }},  function (err, currentAndNextEvents) {
+			if(err) { return _handleError(res, err); }
+			if(!currentAndNextEvents) { return res.send(404); }
+			if (currentAndNextEvents.length >= gConfig.pagination.defaultLimit) {
+				return res.json(200, currentAndNextEvents);
+			} else {
+				Event.find({name: new RegExp(req.params.name, 'i'), "duration.end": {$lt: Date.now() }},  function (err, oldEvents) {
+					if(!oldEvents) { return res.send(404); }
+					var sendEvents = currentAndNextEvents.concat(oldEvents);
+					return res.json(200, sendEvents);
+				}).limit(limit - currentAndNextEvents.length).sort({"duration.end": -1});
+			}
+		}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
+	} else {
+		Event.find({name: new RegExp(req.params.name, 'i'), "duration.start": {$gt: start }, "duration.end": {$lt: end }},  function (err, currentAndNextEvents) {
+			if(err) { return _handleError(res, err); }
+			if(!currentAndNextEvents) { return res.send(404); }
 			return res.json(200, currentAndNextEvents);
-		} else {
-			Event.find({name: new RegExp(req.params.name, 'i'), "duration.end": {$lt: Date.now()}},  function (err, oldEvents) {
-				if(!oldEvents) { return res.send(404); }
-				var sendEvents = currentAndNextEvents.concat(oldEvents);
-				return res.json(200, sendEvents);
-			}).limit(limit - currentAndNextEvents.length);
-		}
-	}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
+		}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
+	}
 }
 
 // Creates a new event in the DB.
@@ -294,8 +305,7 @@ function _removeEventFromUser(user, eventID, callback){
 		if(!userData) { return callback(null, null); }
 
 		userData = userData[0];
-		console.log(userData);
-		console.log(userData.events);
+
 		var index = userData.events.map(function (obj){ return obj.id }).indexOf(Number(eventID));
 		if (index === -1) {
 			return callback("User: Event is not in user", null);
