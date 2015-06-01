@@ -17,6 +17,7 @@ router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 router.post('/:id/join', auth.isAuthenticated(), controller.addParticipant);
 router.post('/:id/leave', auth.isAuthenticated(), controller.removeParticipant);
 
+router.get('/:id/quota', controller.getQuota);
 
 
 module.exports = router;

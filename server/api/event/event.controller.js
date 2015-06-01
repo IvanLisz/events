@@ -294,12 +294,12 @@ function _removeUserFromEvent(user, eventID, callback){
 
 		eventData.quota.now = eventData.quota.now - 1;
 
-		eventData.save(function (err, doc) {
+		eventData.save(function (err, newEvent) {
 			if(err) {
 				console.log(err);
 				return callback(err, null);
 			}
-			return callback(null, doc);
+			return callback(null, newEvent);
 		});
 	}).limit(1);
 
@@ -320,12 +320,12 @@ function _removeEventFromUser(user, eventID, callback){
 
 		console.log(userData);
 
-		userData.save(function (err, doc) {
+		userData.save(function (err, newUser) {
 			if(err) {
 				console.log(err);
 				return callback(err, null);
 			}
-			return callback(null, doc)
+			return callback(null, newUser)
 		});
 	}).limit(1);
 }
@@ -335,17 +335,41 @@ function removeParticipant (req, res) {
 	var user = req.user;
 	var eventID = req.params.id;
 
-	_removeUserFromEvent(user, eventID, function (err, doc){
+	_removeUserFromEvent(user, eventID, function (err, eventData){
 		if (err){ return _handleError(res, err); }
-		if (!doc){ return res.send(500); }
+		if (!eventData){ return res.send(500); }
 
-		_removeEventFromUser(user, eventID, function (err, doc){
+		_removeEventFromUser(user, eventID, function (err, userData){
 			if (err){ return _handleError(res, err); }
-			if (!doc){ return res.send(500); }
+			if (!userData){ return res.send(500); }
 
 			return res.send(200);
 		});
 	});
+}
+
+function getQuota(req, res) {
+	var eventID = req.params.id;
+	Event.find({id: Number(eventID)}, function (err, eventData) {
+		if (err){ return _handleError(res, err); }
+		if (!eventData){ return res.send(500); }
+
+		eventData = eventData[0];
+
+
+		var resObject = {
+			now: eventData.quota.now
+		};
+
+		if (eventData.quota.limit > -1){
+			resObject.pending = eventData.quota.limit - eventData.quota.now;
+			resObject.pendingPercent =  (eventData.quota.limit - eventData.quota.now) * 100 / eventData.quota.limit;
+			resObject.limit = eventData.quota.limit;
+		}
+
+
+		return res.json(200, resObject);
+	}).limit(1);
 }
 
 module.exports = {
@@ -356,5 +380,6 @@ module.exports = {
 	update: update,
 	destroy: destroy,
 	addParticipant: addParticipant,
-	removeParticipant: removeParticipant
+	removeParticipant: removeParticipant,
+	getQuota: getQuota
 }
