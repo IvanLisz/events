@@ -9,6 +9,7 @@ var UserSchema = new Schema({
 	id: Number,
 	name: { type: String, required: true },
 	picture: String,
+	bio: String,
 	email: { type: String, lowercase: true, required: true  },
 	role: {	type: String, default: 'user'},
 	hashedPassword: String,

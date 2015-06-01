@@ -103,11 +103,11 @@ function _addFavToUser (user, eventID, callback){
 
 		userData = userData[0];
 
-		var index = userData.favorites.indexOf(eventID);
+		var index = userData.favorites.indexOf(Number(eventID));
 		if (index !== -1){
 			return callback("User: event is already in user favorite list", null);
 		}
-		userData.favorites.push({id: eventID});
+		userData.favorites.push(Number(eventID));
 
 		userData.save(function (err, newUser) {
 			if(err) {
@@ -119,7 +119,55 @@ function _addFavToUser (user, eventID, callback){
 	}).limit(1);
 }
 
-function _removeFavOfUser(user, eventID, callback){
+function _addFavToEvent(user, eventID, callback){
+	Event.find({id: Number(eventID)}, function (err, eventData){
+		if (err) { return callback(err, null); }
+		if(!eventData) { return callback(null, null); }
+
+		eventData = eventData[0];
+
+		var index = eventData.favoritedBy.map(function(obj) { return obj.id }).indexOf(Number(user.id));
+
+		if (index !== -1) {
+			return callback("Event: user is already in event favoritedBy list", null);
+		}
+
+		eventData.push({id: user.id, name: user.name, picture: user.picture, bio: user.bio});
+
+		eventData.save(function(err, newEvent){
+			if(err) {
+				console.log(err);
+				return callback(err, null);
+			}
+			return callback(null, newEvent);
+		});
+	}).limit(1);
+}
+
+function _removeFavFromEvent(user, eventID, callback){
+	User.find({id: user.id}, function (err, eventData) {
+		if (err) { return callback(err, null); }
+		if(!eventData) { return callback(null, null); }
+
+		eventData = eventData[0];
+
+		var index = eventData.favoritedBy.map(function(obj) { return obj.id }).indexOf(Number(user.id));
+		if (index === -1) {
+			return callback("Event: user is not in events's favoritedBy list", null);
+		}
+		eventData.favoritedBy.splice(index, 1);
+
+		eventData.save(function (err, newEvent) {
+			if(err) {
+				console.log(err);
+				return callback(err, null);
+			}
+			return callback(null, newEvent)
+		});
+	}).limit(1);
+}
+
+function _removeFavFromUser(user, eventID, callback){
 	User.find({id: user.id}, function (err, userData) {
 		if (err) { return callback(err, null); }
 		if(!userData) { return callback(null, null); }
@@ -132,48 +180,76 @@ function _removeFavOfUser(user, eventID, callback){
 		}
 		userData.favorites.splice(index, 1);
 
-		userData.save(function (err, doc) {
+		userData.save(function (err, newUser) {
 			if(err) {
 				console.log(err);
 				return callback(err, null);
 			}
-			return callback(null, doc)
+			return callback(null, newUser)
 		});
 	}).limit(1);
 }
 
-function _showUserFavs (user, eventID, callback){
+function _showUserFavs (user, eventID, page, limit, callback){
 	User.find({id: user.id}, function (err, userData) {
 		if (err) { return callback(err, null); }
 		if(!userData) { return callback(null, null); }
 
 		userData = userData[0];
 
-		return callback(null, userData.favorites)
+		return callback(null, userData.favorites);
 
-	}).limit(1);
+	}).skip((page)*limit).limit(limit).sort({"duration.start": 1});
 }
 
 
 function favAdd(req, res){
-	var userId = req.user;
+	var user = req.user;
+	var eventID = req.params.id;
+
 	_addFavToUser(user, eventID, function(err, userRes){
 		if (err){ return _handleError(res, err); }
 		if (!userRes){ return res.send(500); }
-		return res.json(200, userRes);
+
+		_addFavToEvent(user, eventID, function(err, eventRes){
+			if (err){ return _handleError(res, err); }
+			if (!eventRes){ return res.send(500); }
+			return res.json(200, eventRes);
+		}
 	});
 }
 
 function favRemove(req, res){
-	var userId = req.user;
-	_removeFavOfUser(user, eventID, function(err, userRes){
+	var user = req.user;
+	var eventID = req.params.id;
+
+	_removeFavFromUser(user, eventID, function(err, userRes){
 		if (err){ return _handleError(res, err); }
 		if (!userRes){ return res.send(500); }
-		return res.json(200, userRes);
+		
+		_removeFavFromEvent(user, eventID, function(err, eventRes){
+			if (err){ return _handleError(res, err); }
+			if (!eventRes){ return res.send(500); }
+			return res.json(200, eventRes);
+		}
 	});
 }
 
 function favList(req, res) {
+	var user = req.user;
+	var eventID = req.params.id;
+	var page = req.query.page || gConfig.pagination.defaultPage;
+	var limit = req.query.limit || gConfig.pagination.defaultLimit;
+
+	if (limit > gConfig.pagination.maxLimit){
+		limit = gConfig.pagination.maxLimit;
+	}
+
+	_showUserFavs(user, eventID, page, limit, function(err, userFavs{
+		if (err){ return _handleError(res, err); }
+		if (!userRes){ return res.send(500); }
+		return res.json(200, userRes);
+	});
 
 }
 

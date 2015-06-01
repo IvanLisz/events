@@ -238,6 +238,10 @@ function _addUserToEvent(user, eventID, callback){
 
 		eventData = eventData[0];
 
+		if(eventData.quota.now >= eventData.quota.limit){ return callback("quota limit", null) };
+
+		eventData.quota.now = eventData.quota.now + 1;
+
 		var index = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
 		if (index !== -1){
 			return callback("Event: User already participating", null);
@@ -287,6 +291,8 @@ function _removeUserFromEvent(user, eventID, callback){
 		}
 
 		eventData.participants.splice(index, 1);
+
+		eventData.quota.now = eventData.quota.now - 1;
 
 		eventData.save(function (err, doc) {
 			if(err) {

@@ -22,12 +22,21 @@ var EventSchema = new Schema({
 		role: String
 	}],
 	categories: [String],
-	quota: Number,
+	quota: {
+		now: { type: Number, default: 0 },
+		limit: Number
+	},
 	memories: [{
 		name: String,
 		provider: { type: String, required: true },
 		picture: String,
 		text: String
+	}],
+	favoritedBy: [{
+		id: Number,
+		name: String,
+		bio: String,
+		picture: String
 	}]
 });
 
