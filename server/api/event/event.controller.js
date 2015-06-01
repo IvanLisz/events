@@ -238,7 +238,7 @@ function _addUserToEvent(user, eventID, callback){
 
 		eventData = eventData[0];
 
-		if(eventData.quota.now >= eventData.quota.limit){ return callback("quota limit", null) };
+		if(eventData.quota.limit != -1 && eventData.quota.now >= eventData.quota.limit){ return callback("quota limit", null) };
 
 		eventData.quota.now = eventData.quota.now + 1;
 

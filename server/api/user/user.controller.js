@@ -190,8 +190,8 @@ function _removeFavFromUser(user, eventID, callback){
 	}).limit(1);
 }
 
-function _showUserFavs (user, eventID, page, limit, callback){
-	User.find({id: user.id}, function (err, userData) {
+function _showUserFavs (user, page, limit, callback){
+	User.find({id: Number(user)}, function (err, userData) {
 		if (err) { return callback(err, null); }
 		if(!userData) { return callback(null, null); }
 
@@ -207,15 +207,15 @@ function favAdd(req, res){
 	var user = req.user;
 	var eventID = req.params.id;
 
-	_addFavToUser(user, eventID, function(err, userRes){
+	_addFavToUser(user, eventID, function (err, userRes) {
 		if (err){ return _handleError(res, err); }
 		if (!userRes){ return res.send(500); }
 
-		_addFavToEvent(user, eventID, function(err, eventRes){
+		_addFavToEvent(user, eventID, function (err, eventRes) {
 			if (err){ return _handleError(res, err); }
 			if (!eventRes){ return res.send(500); }
 			return res.json(200, eventRes);
-		}
+		});
 	});
 }
 
@@ -223,21 +223,21 @@ function favRemove(req, res){
 	var user = req.user;
 	var eventID = req.params.id;
 
-	_removeFavFromUser(user, eventID, function(err, userRes){
+	_removeFavFromUser(user, eventID, function (err, userRes) {
 		if (err){ return _handleError(res, err); }
 		if (!userRes){ return res.send(500); }
-		
-		_removeFavFromEvent(user, eventID, function(err, eventRes){
+
+		_removeFavFromEvent(user, eventID, function (err, eventRes) {
 			if (err){ return _handleError(res, err); }
 			if (!eventRes){ return res.send(500); }
 			return res.json(200, eventRes);
-		}
+		});
 	});
 }
 
 function favList(req, res) {
-	var user = req.user;
-	var eventID = req.params.id;
+//	var user = req.user;
+	var userId = req.params.uid;
 	var page = req.query.page || gConfig.pagination.defaultPage;
 	var limit = req.query.limit || gConfig.pagination.defaultLimit;
 
@@ -245,10 +245,10 @@ function favList(req, res) {
 		limit = gConfig.pagination.maxLimit;
 	}
 
-	_showUserFavs(user, eventID, page, limit, function(err, userFavs{
+	_showUserFavs(userId, page, limit, function (err, userFavs) {
 		if (err){ return _handleError(res, err); }
-		if (!userRes){ return res.send(500); }
-		return res.json(200, userRes);
+		if (!userFavs){ return res.send(500); }
+		return res.json(200, userFavs);
 	});
 
 }

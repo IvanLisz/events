@@ -24,7 +24,7 @@ var EventSchema = new Schema({
 	categories: [String],
 	quota: {
 		now: { type: Number, default: 0 },
-		limit: Number
+		limit: { type: Number, default: 2 }
 	},
 	memories: [{
 		name: String,

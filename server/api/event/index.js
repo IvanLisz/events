@@ -18,4 +18,5 @@ router.post('/:id/join', auth.isAuthenticated(), controller.addParticipant);
 router.post('/:id/leave', auth.isAuthenticated(), controller.removeParticipant);
 
 
+
 module.exports = router;
