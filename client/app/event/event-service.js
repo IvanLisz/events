@@ -37,10 +37,8 @@
 		*/
 		function get (params) {
 			var deferred = $q.defer();
-			console.log('get events');
 			$http.get('api/events', { params: params }).
 			success(function (data) {
-				console.log('getted');
 				deferred.resolve(data);
 			}).
 			error(function (err) {

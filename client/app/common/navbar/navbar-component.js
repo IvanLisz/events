@@ -37,10 +37,20 @@
 		}
 	}
 
-	evNavbarController.$inject = ['$state', 'Event'];
+	evNavbarController.$inject = ['$state', 'Auth', 'Login'];
 
-	function evNavbarController ($state, Event) {
+	function evNavbarController ($state, Auth, Login) {
 		/*jshint validthis: true */
 		var ctrl = this;
+
+		ctrl.goToProfile = function () {
+			Auth.getCurrentUser().then(function (user){
+				if (!user.id) {
+					return Login.show();
+				}
+				$state.go('profile', {username: user.username});
+				console.log(user);
+			});
+		};
 	}
 })();

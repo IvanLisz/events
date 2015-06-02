@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('events', [
-	'ngCookies',
+	'ipCookie',
 	'ngResource',
 	'ngSanitize',
 	'ngMaterial',
@@ -9,14 +9,17 @@ angular.module('events', [
 	'ui.router',
 
 	// Pages
+	'events.auth',
 	'events.common',
 	'events.login',
 	'events.landing',
 	'events.event',
 	'events.navbar',
+	'events.profile',
 
 	//Thirdparty
-	'infinite-scroll'
+	'infinite-scroll',
+	'facebook'
 ])
 	.config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 		$urlRouterProvider
@@ -27,13 +30,14 @@ angular.module('events', [
 		//$httpProvider.interceptors.push('authInterceptor');
 	})
 
-	.factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location, $injector) {
+	.factory('authInterceptor', function ($rootScope, $q, ipCookie, $location, $injector) {
 		return {
 			// Add authorization token to headers
 			request: function (config) {
 				config.headers = config.headers || {};
-				if ($cookieStore.get('token')) {
-					config.headers.Authorization = 'Bearer ' + $cookieStore.get('token');
+					debugger;
+				if (ipCookie('token')) {
+					config.headers.Authorization = 'Bearer ' + ipCookie('token');
 				}
 				return config;
 			},
@@ -45,7 +49,7 @@ angular.module('events', [
 						Login.show();
 					});
 					// remove any stale tokens
-					$cookieStore.remove('token');
+					ipCookie.remove('token');
 					return $q.reject(response);
 				}
 				else {
@@ -55,14 +59,14 @@ angular.module('events', [
 		};
 	})
 
-	.run(function ($rootScope, $location, Auth, Login, $cookieStore, $q) {
+	.run(function ($rootScope, $location, Auth, Login, ipCookie, $q) {
 		$rootScope.$on('$stateChangeError',
 		function(event, toState, toParams, fromState, fromParams, error){
 
 			if(error.status === 401){
 				Login.show();
 				// remove any stale tokens
-				$cookieStore.remove('token');
+				ipCookie.remove('token');
 				return $q.reject(error);
 			}
 		});
@@ -78,8 +82,10 @@ angular.module('events', [
 	});
 
 // Modules
+angular.module('events.auth', ['events', 'facebook']);
 angular.module('events.common', ['events']);
 angular.module('events.login', ['events']);
 angular.module('events.landing', ['events']);
 angular.module('events.event', ['events']);
 angular.module('events.navbar', ['events']);
+angular.module('events.profile', ['events']);

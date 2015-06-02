@@ -18,9 +18,9 @@
 	 *
 	 */
 
-	landingPageDirective.$inject = [];
+	landingPageDirective.$inject = ['$window'];
 
-	function landingPageDirective () {
+	function landingPageDirective ($window) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/landing/landing.html',
@@ -33,21 +33,23 @@
 		};
 
 		function link (scope, elm, attr, ctrl) {
-
+			scope.$watch(
+				function () {
+					return $window.approxLocation;
+				}, function () {
+					ctrl.approxLocation = getApproxLocation();
+				}
+			);
 		}
 	}
 
-	landingPageController.$inject = ['$state', 'Event', 'Geolocation'];
+	landingPageController.$inject = ['$state', 'Event'];
 
-	function landingPageController ($state, Event, Geolocation) {
+	function landingPageController ($state, Event) {
 		/*jshint validthis: true */
 		var ctrl = this;
 
 		var paginationPage = 0;
-
-		ctrl.approxLocation = getApproxLocation();
-
-		console.log(ctrl.approxLocation);
 
 		ctrl.events = {
 			go: goToEvent,
@@ -78,8 +80,6 @@
 					if (!response.data.length) {
 						ctrl.events.noMoreResults = true;
 					}
-					console.log('response.data');
-					console.log(response.data);
 					ctrl.events.data = ctrl.events.data.concat(response.data);
 					ctrl.events.noMoreResults = response.lastResults;
 					ctrl.events.busy = false;
@@ -93,6 +93,9 @@
 	}
 
 	function getApproxLocation () {
+		if (!window.approxLocation) {
+			return;
+		}
 		if (window.approxLocation.city) {
 			if (window.approxLocation.regionName) {
 				return window.approxLocation.regionName + ', ' + window.approxLocation.city;

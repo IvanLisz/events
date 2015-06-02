@@ -16,19 +16,12 @@
 	LoginService.$inject = ['$mdDialog'];
 
 	function LoginService ($mdDialog) {
-		var globalServiceVariable;
-
-		initialize();
 
 		return {
 			show: show
 		};
 
 		///////////////////////////////////////////
-
-		function initialize () {
-			console.log(globalServiceVariable);
-		}
 
 		/**
 		 * @ngdoc method
@@ -40,12 +33,12 @@
 		*/
 		function show () {
 			$mdDialog.show({
-				template: '<ev-login-modal></ev-login-modal>',
+				template: '<md-dialog><ev-login-modal></ev-login-modal></md-dialog>'
 			})
 			.then(function(answer) {
-				$scope.alert = 'You said the information was "' + answer + '".';
+				console.log('You said the information was "' + answer + '".');
 			}, function() {
-				$scope.alert = 'You cancelled the dialog.';
+				console.log('You cancelled the dialog.');
 			});
 		}
 	}

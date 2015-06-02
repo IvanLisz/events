@@ -3,11 +3,11 @@
 
 	angular
 		.module('events.login')
-		.directive('', Directive);
+		.directive('evLoginModal', evLoginModalDirective);
 
 	/**
 	 * @ngdoc directive
-	 * @name events.login.directive:
+	 * @name events.login.directive:evLoginModal
 	 * @restrict E
 	 * @scope
 	 *
@@ -18,16 +18,17 @@
 	 *
 	 */
 
-	Directive.$inject = [];
+	evLoginModalDirective.$inject = [];
 
-	function Directive () {
+	function evLoginModalDirective () {
 		return {
 			restrict: 'E',
+			templateUrl: 'app/login/login.html',
 			scope: {},
-			controller: Controller,
+			controller: evLoginModalController,
 			controllerAs: 'ctrl',
 			bindToController: true,
-			require: '',
+			require: 'evLoginModal',
 			link: link
 		};
 
@@ -36,10 +37,33 @@
 		}
 	}
 
-	Controller.$inject = [];
+	evLoginModalController.$inject = ['Auth', '$window', '$state'];
 
-	function Controller () {
+	function evLoginModalController (Auth, $window, $state) {
+		/*jshint validthis:true */
+
 		var ctrl = this;
 
+		ctrl.user = {};
+		ctrl.errors = {};
+
+		ctrl.login = function(form) {
+			ctrl.submitted = true;
+
+			if(form.$valid) {
+				Auth.login({
+					email: ctrl.user.email,
+					password: ctrl.user.password
+				})
+				.then( function() {
+					$state.go('landing');
+				})
+				.catch( function(err) {
+					ctrl.errors.other = err.message;
+				});
+			}
+		};
+
+		ctrl.loginOauth = Auth.loginOauth;
 	}
 })();
