@@ -9,6 +9,7 @@ angular.module('events', [
 	'ui.router',
 
 	// Pages
+	'events.common',
 	'events.login',
 	'events.landing',
 	'events.event',
@@ -20,12 +21,13 @@ angular.module('events', [
 	.config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 		$urlRouterProvider
 			.otherwise('/');
-
+		$httpProvider.defaults.useXDomain = true;
+		delete $httpProvider.defaults.headers.common['X-Requested-With'];
 		$locationProvider.html5Mode(true);
-		$httpProvider.interceptors.push('authInterceptor');
+		//$httpProvider.interceptors.push('authInterceptor');
 	})
 
-	.factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
+	.factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location, $injector) {
 		return {
 			// Add authorization token to headers
 			request: function (config) {
@@ -39,7 +41,9 @@ angular.module('events', [
 			// Intercept 401s and redirect you to login
 			responseError: function(response) {
 				if(response.status === 401) {
-					$location.path('/login');
+					$injector.invoke(function ($http, Login) {
+						Login.show();
+					});
 					// remove any stale tokens
 					$cookieStore.remove('token');
 					return $q.reject(response);
@@ -51,7 +55,18 @@ angular.module('events', [
 		};
 	})
 
-	.run(function ($rootScope, $location, Auth) {
+	.run(function ($rootScope, $location, Auth, Login, $cookieStore, $q) {
+		$rootScope.$on('$stateChangeError',
+		function(event, toState, toParams, fromState, fromParams, error){
+
+			if(error.status === 401){
+				Login.show();
+				// remove any stale tokens
+				$cookieStore.remove('token');
+				return $q.reject(error);
+			}
+		});
+
 		// Redirect to login if route requires auth and you're not logged in
 		$rootScope.$on('$stateChangeStart', function (event, next) {
 			Auth.isLoggedIn(function(loggedIn) {
@@ -63,6 +78,7 @@ angular.module('events', [
 	});
 
 // Modules
+angular.module('events.common', ['events']);
 angular.module('events.login', ['events']);
 angular.module('events.landing', ['events']);
 angular.module('events.event', ['events']);

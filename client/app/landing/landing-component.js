@@ -37,13 +37,17 @@
 		}
 	}
 
-	landingPageController.$inject = ['$state', 'Event'];
+	landingPageController.$inject = ['$state', 'Event', 'Geolocation'];
 
-	function landingPageController ($state, Event) {
+	function landingPageController ($state, Event, Geolocation) {
 		/*jshint validthis: true */
 		var ctrl = this;
 
 		var paginationPage = 0;
+
+		ctrl.approxLocation = getApproxLocation();
+
+		console.log(ctrl.approxLocation);
 
 		ctrl.events = {
 			go: goToEvent,
@@ -85,6 +89,26 @@
 					ctrl.events.busy = false;
 				}
 			);
+		}
+	}
+
+	function getApproxLocation () {
+		if (window.approxLocation.city) {
+			if (window.approxLocation.regionName) {
+				return window.approxLocation.regionName + ', ' + window.approxLocation.city;
+			}
+			if (window.approxLocation.country) {
+				return window.approxLocation.country + ', ' + window.approxLocation.city;
+			}
+		}
+		if (window.approxLocation.regionName) {
+			if (window.approxLocation.country) {
+				return window.approxLocation.country + ', ' + window.approxLocation.regionName;
+			}
+			return window.approxLocation.regionName;
+		}
+		if (window.approxLocation.country) {
+			return window.approxLocation.country;
 		}
 	}
 })();

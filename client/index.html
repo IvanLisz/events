@@ -25,6 +25,21 @@
     <link rel="stylesheet" href="app/app.css">
       <!-- injector:css -->
       <!-- endinjector -->
+
+      <script type="text/javascript">
+        var myip;
+        function callback(data) {
+            window.approxLocation = data;
+        }
+        function request_location() {
+            var oHead = document.getElementsByTagName('head')[0];
+            var oScript = document.createElement("script");
+            oScript.type = "text/javascript";
+            oScript.src = "http://ip-api.com/json/" + myip + "?callback=callback";
+            oHead.appendChild(oScript);
+        }
+      </script>
+      <script type="text/javascript" src="http://l2.io/ip.js?var=myip" onload="request_location();"></script>
     <!-- endbuild -->
   </head>
   <body layout="column" ng-app="events">
@@ -76,11 +91,14 @@
         <script src="app/app.js"></script>
           <!-- injector:js -->
           <script src="app/account/account.js"></script>
+          <script src="app/account/login/login-component.js"></script>
+          <script src="app/account/login/login-service.js"></script>
           <script src="app/account/login/login.controller.js"></script>
           <script src="app/account/settings/settings.controller.js"></script>
           <script src="app/account/signup/signup.controller.js"></script>
           <script src="app/admin/admin.controller.js"></script>
           <script src="app/admin/admin.js"></script>
+          <script src="app/common/geolocation-service.js"></script>
           <script src="app/common/navbar/navbar-component.js"></script>
           <script src="app/event/create/create-event-component.js"></script>
           <script src="app/event/ev-event-card.js"></script>

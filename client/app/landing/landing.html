@@ -1,6 +1,6 @@
 <div class="banner">
 	<div>
-		<h1>Buscá una nueva aventura!</h1>
+		<h1>Buscá una nueva aventura</h1>
 		<md-autocomplete
 		md-autoselect="true"
 		md-search-text="ctrl.events.search"
@@ -16,6 +16,7 @@
 				No matches found for "{{ctrl.events.search}}".
 			</md-not-found>
 		</md-autocomplete>
+		<h4>{{::ctrl.approxLocation}}</h4>
 	</div>
 </div>
 
