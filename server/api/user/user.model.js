@@ -28,11 +28,11 @@ var UserSchema = new Schema({
 		tid: { type: Number, default: 0 }, // event ticket ID
 		role: { type: String, default: 'guest'},
 		info: {
-			date: { type: Date, required: true },
+			duration: { start: Date, end: Date },
 			price: { type: Number, default: 0 },
 			category: String
 		},
-		status: { type: String, default: 2 } // 0: Cancelled  - 1 Active - 2 Pending
+		status: { type: Number, default: 2 } // 0: Cancelled  - 1 Active - 2 Pending
 	}],
 	favorites: [Number] // TODO {id, date}
 });

@@ -104,7 +104,7 @@
 		function join (id) {
 			var deferred = $q.defer();
 
-			$http.post('api/events/' + id + '/join').
+			$http.post('api/tickets/buy/' + id, {tid: 0}).
 			success(function (data) {
 				deferred.resolve(data);
 			}).
@@ -126,7 +126,7 @@
 		function leave (id) {
 			var deferred = $q.defer();
 
-			$http.post('api/events/' + id + '/leave').
+			$http.post('api/tickets/cancel/' + id).
 			success(function (data) {
 				deferred.resolve(data);
 			}).
