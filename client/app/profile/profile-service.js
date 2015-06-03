@@ -34,7 +34,7 @@
 		function get (name) {
 			var deferred = $q.defer();
 
-			$http.get('api/users/' + name + '/profile').
+			$http.get('api/users/' + name).
 			success(function (data) {
 				deferred.resolve(data);
 			}).

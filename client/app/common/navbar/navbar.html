@@ -1,11 +1,12 @@
 <md-toolbar>
 	<div class="md-toolbar-tools">
-		<md-button class="md-icon-button" aria-label="Settings" ui-sref="create">
+		<md-button class="md-icon-button" aria-label="Settings" ui-sref="main">
 			Logo
 		</md-button>
 		<span flex></span>
 		<md-button class="md-icon-button" aria-label="My Profile" ng-click="ctrl.goToProfile()">
-			<i class="md-person md-lg"></i>
+			<img ng-src="{{ctrl.user.picture}}" ng-show="ctrl.user" class="profile-pic">
+			<i class="md-person md-lg" ng-hide="ctrl.user"></i>
 		</md-button>
 		<md-button class="md-icon-button" aria-label="Create Event" ui-sref="create">
 			<i class="md-create md-lg"></i>

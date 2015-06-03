@@ -5,8 +5,11 @@ var mongoose 	= require('mongoose'),
 	crypto 		= require('crypto'),
 	authTypes 	= ['github', 'twitter', 'facebook', 'google'];
 
+	var _ = require('lodash');
+
 var UserSchema = new Schema({
 	id: Number,
+	username: { type: String },
 	name: { type: String, required: true },
 	picture: String,
 	bio: String,
@@ -106,27 +109,25 @@ var validatePresenceOf = function(value) {
 UserSchema
 	.pre('save', function(next) {
 		if (!this.isNew) return next();
-
-		if (!validatePresenceOf(this.hashedPassword) && authTypes.indexOf(this.provider) === -1)
+		if (!this.username) {
+			this.username = _.snakeCase(this.name);
+		}
+		if (!validatePresenceOf(this.hashedPassword) && authTypes.indexOf(this.provider) === -1) {
 			next(new Error('Invalid password'));
-		else
+		} else {
 			var self = this;
 			self.constructor
 			.findOne()
 			.sort('-id')
 			.exec(function (err, member) {
-				console.log("err");
-				console.log("last event");
-				console.log(member);
 				if (!member) {
 					self.id = 1;
 				} else {
 					self.id = member.id + 1;
 				}
-				console.log("UID");
-				console.log(self.id);
 				next();
 			});
+		}
 	});
 
 /**

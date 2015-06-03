@@ -2,12 +2,12 @@
 	'use strict';
 
 	angular
-		.module('events.landing')
-		.directive('landingPage', landingPageDirective);
+		.module('events.main')
+		.directive('mainPage', mainPageDirective);
 
 	/**
 	 * @ngdoc directive
-	 * @name events.landing.directive:landingPage
+	 * @name events.main.directive:mainPage
 	 * @restrict E
 	 * @scope
 	 *
@@ -18,17 +18,17 @@
 	 *
 	 */
 
-	landingPageDirective.$inject = ['$window'];
+	mainPageDirective.$inject = ['$window'];
 
-	function landingPageDirective ($window) {
+	function mainPageDirective ($window) {
 		return {
 			restrict: 'E',
-			templateUrl: 'app/landing/landing.html',
+			templateUrl: 'app/main/main.html',
 			scope: {},
-			controller: landingPageController,
+			controller: mainPageController,
 			controllerAs: 'ctrl',
 			bindToController: true,
-			require: 'landingPage',
+			require: 'mainPage',
 			link: link
 		};
 
@@ -43,9 +43,9 @@
 		}
 	}
 
-	landingPageController.$inject = ['$state', 'Event'];
+	mainPageController.$inject = ['$state', 'Event'];
 
-	function landingPageController ($state, Event) {
+	function mainPageController ($state, Event) {
 		/*jshint validthis: true */
 		var ctrl = this;
 

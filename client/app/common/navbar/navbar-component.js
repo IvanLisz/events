@@ -43,14 +43,15 @@
 		/*jshint validthis: true */
 		var ctrl = this;
 
+		Auth.getCurrentUser().then(function (user){
+			ctrl.user = user;
+		});
+
 		ctrl.goToProfile = function () {
-			Auth.getCurrentUser().then(function (user){
-				if (!user.id) {
-					return Login.show();
-				}
-				$state.go('profile', {username: user.username});
-				console.log(user);
-			});
+			if (!ctrl.user.id) {
+				return Login.show();
+			}
+			$state.go('profile', {username: ctrl.user.username});
 		};
 	}
 })();

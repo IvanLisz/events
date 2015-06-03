@@ -15,7 +15,7 @@
     "express-session": "~1.0.2",
     "fb": "^0.7.0",
     "jsonwebtoken": "^0.3.0",
-    "lodash": "~2.4.1",
+    "lodash": "^3.9.3",
     "method-override": "~1.0.0",
     "mongoose": "~4.0.3",
     "mongoose-pagination": "~1.0.0",

@@ -40,12 +40,11 @@ function create (req, res, next) {
  * Get a single user
  */
 function show (req, res, next) {
-	var userId = req.params.id;
-
-	User.findById(userId, function (err, user) {
+	var username = req.params.username;
+	User.findOne({'username': username}, function (err, user) {
 		if (err) return next(err);
 		if (!user) return res.send(401);
-		res.json(user.profile);
+		res.json(user);
 	});
 };
 
