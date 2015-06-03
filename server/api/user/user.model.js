@@ -20,11 +20,18 @@ var UserSchema = new Schema({
 	google: {},
 	github: {},
 	location: String,
-	events: [{
-		id: { type: Number, default: 0 },
-		role: { type: String, default: 'guest'}
+	tickets: [{
+		eid: { type: Number, default: 0 }, //event id
+		tid: { type: Number, default: 0 }, // event ticket ID
+		role: { type: String, default: 'guest'},
+		info: {
+			date: { type: Date, required: true },
+			price: { type: Number, default: 0 },
+			category: String
+		},
+		status: { type: String, default: 2 } // 0: Cancelled  - 1 Active - 2 Pending
 	}],
-	favorites: [Number]
+	favorites: [Number] // TODO {id, date}
 });
 
 /**
