@@ -37,6 +37,11 @@ var EventSchema = new Schema({
 		name: String,
 		bio: String,
 		picture: String
+	}],
+	tickets: [{
+		id: { type: Number, default: 0 },
+		price: { type: Number, default: 0 },
+		category: { type: String, default: "General" }
 	}]
 });
 

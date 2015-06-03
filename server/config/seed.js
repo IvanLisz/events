@@ -19,7 +19,8 @@ Event.find().remove(function() {
 			username: 'peron'
 		},
 		duration: {start: Date.now() + 3600000, end: Date.now() + 86400000},
-		location: 'Buenos Aires, Argentina'
+		location: 'Buenos Aires, Argentina',
+		tickets: [{}]
 	},
 	{
 		name: 'evento dentro de mas tiempo',
@@ -30,7 +31,8 @@ Event.find().remove(function() {
 			username: 'peron'
 		},
 		duration: {start: Date.now() + 3600000 * 2, end: Date.now() + 96400000},
-		location: 'Buenos Aires, Argentina'
+		location: 'Buenos Aires, Argentina',
+		tickets: [{}]
 	},
 	{
 		name: 'evento ahora',
@@ -41,7 +43,8 @@ Event.find().remove(function() {
 			username: 'peron'
 		},
 		duration: {start: Date.now(), end: Date.now() + 3600000},
-		location: 'Buenos Aires, Argentina'
+		location: 'Buenos Aires, Argentina',
+		tickets: [{}]
 	},
 	{
 		name: 'evento viejo',
@@ -52,7 +55,8 @@ Event.find().remove(function() {
 			username: 'pele'
 		},
 		duration: {start: Date.now()- 86400000 * 3 , end: Date.now() - 86400000 },
-		location: 'Buenos Aires, Argentina'
+		location: 'Buenos Aires, Argentina',
+		tickets: [{}]
 	},
 	{
 		name: 'evento mas viejo',
@@ -63,7 +67,8 @@ Event.find().remove(function() {
 			username: 'pele'
 		},
 		duration: {start: Date.now()- 86400000 * 4, end: Date.now() - 86400000 * 2},
-		location: 'Buenos Aires, Argentina'
+		location: 'Buenos Aires, Argentina',
+		tickets: [{}]
 	},
 	{
 		name: 'evento mucho mas viejo',
@@ -74,7 +79,8 @@ Event.find().remove(function() {
 			username: 'pele'
 		},
 		duration: {start: Date.now()- 86400000 * 6, end: Date.now() - 86400000 * 3},
-		location: 'Buenos Aires, Argentina'
+		location: 'Buenos Aires, Argentina',
+		tickets: [{}]
 	}
 	])
 });

@@ -207,11 +207,11 @@ function _addEventToUser (user, eventID, callback){
 
 		userData = userData[0];
 
-		var index = userData.events.map(function (obj){ return obj.id }).indexOf(eventID);
+		var index = userData.tickets.map(function (obj){ return obj.id }).indexOf(eventID);
 		if (index !== -1){
 			return callback("User: Event is already in user", null);
 		}
-		userData.events.push({id: eventID});
+		userData.tickets.push({id: eventID});
 
 		userData.save(function (err, newUser) {
 			if(err) {
@@ -312,11 +312,11 @@ function _removeEventFromUser(user, eventID, callback){
 
 		userData = userData[0];
 
-		var index = userData.events.map(function (obj){ return obj.id }).indexOf(Number(eventID));
+		var index = userData.tickets.map(function (obj){ return obj.id }).indexOf(Number(eventID));
 		if (index === -1) {
 			return callback("User: Event is not in user", null);
 		}
-		userData.events.splice(index, 1);
+		userData.tickets.splice(index, 1);
 
 		console.log(userData);
 
