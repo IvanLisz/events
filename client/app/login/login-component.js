@@ -37,9 +37,9 @@
 		}
 	}
 
-	evLoginModalController.$inject = ['Auth', '$window', '$state'];
+	evLoginModalController.$inject = ['Auth', '$window', '$state', '$mdDialog'];
 
-	function evLoginModalController (Auth, $window, $state) {
+	function evLoginModalController (Auth, $window, $state, $mdDialog) {
 		/*jshint validthis:true */
 
 		var ctrl = this;
@@ -56,7 +56,7 @@
 					password: ctrl.user.password
 				})
 				.then( function() {
-					$state.go('landing');
+			 		$mdDialog.hide();
 				})
 				.catch( function(err) {
 					ctrl.errors.other = err.message;
@@ -64,6 +64,14 @@
 			}
 		};
 
-		ctrl.loginOauth = Auth.loginOauth;
+		ctrl.loginOauth = function (provider) {
+			Auth.loginOauth(provider)
+			 .then( function() {
+			 	$mdDialog.hide();
+			 })
+			 .catch( function(err) {
+			 	ctrl.errors.other = err.message;
+			 });
+		};
 	}
 })();

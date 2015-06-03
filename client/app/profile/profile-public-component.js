@@ -25,7 +25,7 @@
 			restrict: 'E',
 			templateUrl: 'app/profile/profile-public.html',
 			scope: {
-				'profile': '='
+				profile: '='
 			},
 			controller: profilePublicPageController,
 			controllerAs: 'ctrl',
@@ -39,6 +39,6 @@
 	function profilePublicPageController () {
 		/*jshint validthis: true */
 		var ctrl = this;
-
+		console.log(ctrl);
 	}
 })();

@@ -9,6 +9,8 @@ var mongoose 	= require('mongoose'),
 	User 		= require('../api/user/user.model'),
 	validateJwt = expressJwt({ secret: config.secrets.session });
 
+var expirationTime = 86400;
+
 /**
  * Attaches the user object to the request if authenticated
  * Otherwise returns 403
@@ -57,7 +59,7 @@ function hasRole(roleRequired) {
  * Returns a jwt token signed by the app secret
  */
 function signToken(id) {
-	return jwt.sign({ _id: id }, config.secrets.session, { expiresInMinutes: 60*5 });
+	return jwt.sign({ _id: id }, config.secrets.session, { expiresInMinutes: expirationTime });
 }
 
 /**
@@ -67,12 +69,26 @@ function setTokenCookie(req, res) {
 	if (!req.user) return res.json(404, { message: 'Something went wrong, please try again.'});
 	var token = signToken(req.user._id, req.user.role);
 	res.cookie('token', JSON.stringify(token));
-	return token;
+	return {
+		token: token,
+		expiration: expirationTime
+	};
+}
+
+function sendUser(req, res, user) {
+	req.user = user;
+	var cookie = setTokenCookie(req, res);
+	return res.status(200).json({
+		expiration: cookie.expiration,
+		token: cookie.token,
+		user: user
+	});
 }
 
 module.exports = {
 	isAuthenticated: isAuthenticated,
 	hasRole: hasRole,
 	signToken: signToken,
-	setTokenCookie: setTokenCookie
+	setTokenCookie: setTokenCookie,
+	sendUser: sendUser
 }

@@ -5,14 +5,14 @@ angular.module('events.profile')
 
 	$stateProvider
 	.state('profile', {
-		url: '/profile/@:username',
+		url: '/@{username}',
 		template: '<profile-public-page profile="::profile"></profile-public-page>',
 		controller: ['$scope', '$state', 'Auth', 'Profile', function ($scope, $state, Auth, Profile) {
 			$scope.profile = Profile;
 		}],
 		resolve: {
 			Profile: ['$stateParams', 'Profile', function ($stateParams, Profile) {
-				return Profile.search($stateParams.username);
+				return Profile.get($stateParams.username);
 			}]
 		}
 	});

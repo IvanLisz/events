@@ -44,6 +44,7 @@
 					loginPromise.resolve(user);
 				}).
 				error(function (err) {
+					logout();
 					loginPromise.reject(err);
 				});
 			}
@@ -65,14 +66,13 @@
 				password: user.password
 			}).
 			success(function(data) {
-				console.log('token change');
 				ipCookie('token', data.token);
 				currentUser = User.get();
 				deferred.resolve(data);
 				return cb();
 			}).
 			error(function(err) {
-				this.logout();
+				logout();
 				deferred.reject(err);
 				return cb(err);
 			}.bind(this));
@@ -87,11 +87,15 @@
 		 * @return {Promise}
 		 */
 		function loginOauth  (provider) {
-			debugger;
+			// Because we are trying to login, we reset previous login attempts
+			loginPromise = $q.defer();
 			switch (provider) {
 				case 'facebook':
-					return loginFacebook();
+					Facebook.login(_setFromFacebook, {scope: 'email'});
+					break;
 			}
+			// Return a promise to such attempt
+			return loginPromise.promise;
 			/*
 			$http.get('/auth/' + provider).
 			success(function(data) {
@@ -101,7 +105,7 @@
 				return cb();
 			}).
 			error(function(err) {
-				this.logout();
+				logout();
 				deferred.reject(err);
 				return cb(err);
 			}.bind(this));
@@ -110,7 +114,6 @@
 
 		function _setFromFacebook (response) {
 			if (response && response.status === 'connected') {
-
 				var data = {
 					service: 'facebook',
 					service_token: response.authResponse.accessToken
@@ -118,37 +121,17 @@
 
 				$http.post('/auth/login', data).
 				success(function (logged) {
-					console.log('token change');
-					console.log(response);
-					debugger;
-					ipCookie('token', logged.token);
+					setToken(logged.token, logged.expiration);
 					currentUser = logged.user;
 					loginPromise.resolve(logged.user);
 				}).
 				error(function(err) {
-					debugger;
-					this.logout();
+					logout();
 					loginPromise.reject(err);
 				});
 			} else {
 				loginPromise.resolve(false);
 			}
-		}
-
-		/**
-		 * Tries to log a user using facebook connect
-		 *
-		 * @returns {userPromise} A promise to the logged in user or false
-		 */
-		function loginFacebook () {
-			// Because we are trying to login, we reset previous login attempts
-			loginPromise = $q.defer();
-
-			// Try to login
-			Facebook.login(_setFromFacebook, {scope: 'email'});
-
-			// Return a promise to such attempt
-			return loginPromise.promise;
 		}
 
 		/**
@@ -173,13 +156,12 @@
 
 			return User.save(user,
 				function(data) {
-					console.log('token change');
 					ipCookie('token', data.token);
 					currentUser = User.get();
 					return cb(user);
 				},
 				function(err) {
-					this.logout();
+					logout();
 					return cb(err);
 				}.bind(this)).$promise;
 		}
@@ -252,8 +234,14 @@
 		 * Get auth token
 		 */
 		function getToken () {
-			debugger;
 			return ipCookie('token');
+		}
+
+		/**
+		 * Set auth token
+		 */
+		function setToken (token, expiration) {
+			return ipCookie('token', token, { expirationUnit: 'minutes', expires: expiration });
 		}
 	}
 })();

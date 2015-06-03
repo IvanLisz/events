@@ -41,7 +41,7 @@
 		var ctrl = this;
 
 		if (!ctrl.event) {
-			$state.go('landing');
+			$state.go('main');
 		}
 
 		ctrl.event.join = function () {

@@ -41,18 +41,10 @@ function _facebookLogin (req, res) {
 
 				user.save(function(err) {
 					if (err) res.status(500).send(err);
-					req.user = user;
-					var token = Auth.setTokenCookie(req, res);
-					return res.status(200).json({
-						token: token,
-						user: user
-					});
+					Auth.sendUser(req, res, user);
 				});
 			} else {
-				console.log(res.cookie);
-				Auth.setTokenCookie(req, res);
-				console.log(res.cookie);
-				return res.status(200).send(user);
+				Auth.sendUser(req, res, user);
 			}
 		});
 	});
