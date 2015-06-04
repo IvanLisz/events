@@ -114,11 +114,11 @@ Badge.find({}).remove(function() {
 	createSeed(Badge, [
 	{
 		name: "Pele",
-		info: "badge for being pele",
+		description: "badge for being pele",
 		picture: "?"
 	}, {
 		name: "AW3S0M3",
-		info: "badge of awesomeness",
+		description: "badge of awesomeness",
 		picture: "?"
 	}
 	]);
