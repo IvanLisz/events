@@ -11,8 +11,9 @@ module.exports = function(app) {
 	// Insert routes below
 	app.use('/api/events', require('./api/event'));
 	app.use('/api/users', require('./api/user'));
-	app.use('/api/favs', require('./api/favorite'));
+	app.use('/api/favorites', require('./api/favorite'));
 	app.use('/api/tickets', require('./api/ticket'));
+	app.use('/api/badges', require('./api/badge'));
 
 	app.use('/auth', require('./auth'));
 

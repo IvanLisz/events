@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 var BadgeSchema = new Schema({
 	id: Number,
 	name: String,
-	info: String,
+	description: String,
 	picture: String,
 });
 

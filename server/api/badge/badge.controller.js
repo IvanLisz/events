@@ -10,7 +10,8 @@
 'use strict';
 
 var _ 		= require('lodash'),
-	Badge 	= require('./badge.model');
+	Badge 	= require('./badge.model'),
+	User 	= require('../user/user.model');
 
 // Get list of badges
 function index (req, res) {
@@ -22,46 +23,13 @@ function index (req, res) {
 
 // Get a single badge
 function show (req, res) {
-	Badge.findById(req.params.id, function (err, badge) {
+	Badge.find({id: req.params.id }, function (err, badge) {
 		if(err) { return _handleError(res, err); }
 		if(!badge) { return res.send(404); }
 		return res.json(badge);
 	});
 };
 
-// Creates a new badge in the DB.
-function create (req, res) {
-	Badge.create(req.body, function(err, badge) {
-		if(err) { return _handleError(res, err); }
-		return res.json(201, badge);
-	});
-};
-
-// Updates an existing badge in the DB.
-function update (req, res) {
-	if(req.body._id) { delete req.body._id; }
-	Badge.findById(req.params.id, function (err, badge) {
-		if (err) { return _handleError(res, err); }
-		if(!badge) { return res.send(404); }
-		var updated = _.merge(badge, req.body);
-		updated.save(function (err) {
-			if (err) { return _handleError(res, err); }
-			return res.json(200, badge);
-		});
-	});
-};
-
-// Deletes a badge from the DB.
-function destroy (req, res) {
-	Badge.findById(req.params.id, function (err, badge) {
-		if(err) { return _handleError(res, err); }
-		if(!badge) { return res.send(404); }
-		badge.remove(function(err) {
-			if(err) { return _handleError(res, err); }
-			return res.send(204);
-		});
-	});
-};
 
 function _handleError(res, err) {
 	return res.send(500, err);
@@ -69,8 +37,5 @@ function _handleError(res, err) {
 
 module.exports = {
 	index: index,
-	show: show,
-	create: create,
-	update: update,
-	destroy: destroy
+	show: show
 }
