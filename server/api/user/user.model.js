@@ -34,7 +34,8 @@ var UserSchema = new Schema({
 		},
 		status: { type: Number, default: 2 } // 0: Cancelled  - 1 Active - 2 Pending
 	}],
-	favorites: [Number] // TODO {id, date}
+	favorites: [Number], // TODO {id, date}
+	badges: [Number]
 });
 
 /**

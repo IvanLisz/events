@@ -6,7 +6,8 @@
 'use strict';
 
 var Event 	= require('../api/event/event.model'),
-	User 	= require('../api/user/user.model');
+	User 	= require('../api/user/user.model'),
+	Badge 	= require('../api/badge/badge.model');
 
 Event.find().remove(function() {
 	createSeed(Event, [
@@ -104,6 +105,21 @@ User.find({}).remove(function() {
 		name: 'a',
 		email: 'a@a.com',
 		password: 'a'
+	}
+	]);
+});
+
+
+Badge.find({}).remove(function() {
+	createSeed(Badge, [
+	{
+		name: "Pele",
+		info: "badge for being pele",
+		picture: "?"
+	}, {
+		name: "AW3S0M3",
+		info: "badge of awesomeness",
+		picture: "?"
 	}
 	]);
 });
