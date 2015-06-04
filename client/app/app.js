@@ -16,6 +16,7 @@ angular.module('events', [
 	'events.event',
 	'events.navbar',
 	'events.profile',
+	'events.badges',
 
 	//Thirdparty
 	'infinite-scroll',
@@ -46,7 +47,10 @@ angular.module('events', [
 	.run(function ($rootScope, $location, Auth, Login, ipCookie, $q) {
 		$rootScope.$on('$stateChangeError',
 		function(event, toState, toParams, fromState, fromParams, error){
-			if(error.status === 401){
+			if (!error) {
+				return $q.reject();
+			}
+			if (error.status === 401) {
 				Login.show();
 				// remove any stale tokens
 				ipCookie.remove('token');
@@ -73,3 +77,4 @@ angular.module('events.main', ['events']);
 angular.module('events.event', ['events']);
 angular.module('events.navbar', ['events']);
 angular.module('events.profile', ['events']);
+angular.module('events.badges', ['events']);

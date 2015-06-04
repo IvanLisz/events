@@ -18,9 +18,9 @@
 	 *
 	 */
 
-	evNavbarDirective.$inject = [];
+	evNavbarDirective.$inject = ['Auth'];
 
-	function evNavbarDirective () {
+	function evNavbarDirective (Auth) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/common/navbar/navbar.html',
@@ -34,19 +34,22 @@
 
 		function link (scope, elm, attr, ctrl) {
 
+			Auth.onUserChange(function (user) {
+				console.log('change');
+				ctrl.user = user;
+			}).disposeOnDestroy(scope);
 		}
 	}
 
-	evNavbarController.$inject = ['$state', 'Auth', 'Login'];
+	evNavbarController.$inject = ['$state', 'Login', 'Auth'];
 
-	function evNavbarController ($state, Auth, Login) {
+	function evNavbarController ($state, Login, Auth) {
 		/*jshint validthis: true */
 		var ctrl = this;
-
-		Auth.getCurrentUser().then(function (user){
+		ctrl.user = {};
+		Auth.getCurrentUser().then(function (user) {
 			ctrl.user = user;
 		});
-
 		ctrl.goToProfile = function () {
 			if (!ctrl.user.id) {
 				return Login.show();

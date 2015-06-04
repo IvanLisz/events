@@ -1,1 +1,14 @@
-<h1>{{::ctrl.profile.name}}</h1>
+<div ng-if="ctrl.profile">
+	<h1>{{::ctrl.profile.name}}</h1>
+	<ev-if-allowed x-user-id="ctrl.profile.id">
+		<md-button 
+		 class="md-raised md-primary" 
+		 ng-click="ctrl.logout()">
+			Cerrar Sesión
+		</md-button>
+	</ev-if-allowed>
+</div>
+
+<div ng-if="!ctrl.profile">
+	<h1>Usuario no encontrado.</h1>
+</div>

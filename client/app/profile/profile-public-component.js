@@ -34,11 +34,16 @@
 		};
 	}
 
-	profilePublicPageController.$inject = [];
+	profilePublicPageController.$inject = ['Auth', 'Badges'];
 
-	function profilePublicPageController () {
+	function profilePublicPageController (Auth, Badges) {
 		/*jshint validthis: true */
 		var ctrl = this;
-		console.log(ctrl);
+
+		Badges.get().then(function (badges) {
+			ctrl.badges = badges;
+		});
+
+		ctrl.logout = Auth.logout;
 	}
 })();

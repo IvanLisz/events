@@ -7,13 +7,23 @@ var express 	= require('express'),
 
 var router = express.Router();
 
+// Get list of all users
 router.get('/', auth.hasRole('admin'), controller.index);
-router.delete('/:id', auth.hasRole('admin'), controller.destroy);
+
+// Get the authenticated user
 router.get('/me', auth.isAuthenticated(), controller.me);
-router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
-router.get('/:username', auth.isAuthenticated(), controller.show);
+
+// Get user profile
+router.get('/:username', controller.show);
+
+// Creates user
 router.post('/', controller.create);
 
+// Change user password
+router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
+
+// Delete user
+router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
 
 module.exports = router;

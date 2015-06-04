@@ -6,9 +6,10 @@ angular.module('events.profile')
 	$stateProvider
 	.state('profile', {
 		url: '/@{username}',
-		template: '<profile-public-page profile="::profile"></profile-public-page>',
-		controller: ['$scope', '$state', 'Auth', 'Profile', function ($scope, $state, Auth, Profile) {
+		template: '<profile-public-page profile="::profile" badges="::badges"></profile-public-page>',
+		controller: ['$scope', '$state', 'Auth', 'Profile', 'Badges', function ($scope, $state, Auth, Profile, Badges) {
 			$scope.profile = Profile;
+			$scope.badges = Badges;
 		}],
 		resolve: {
 			Profile: ['$stateParams', 'Profile', function ($stateParams, Profile) {

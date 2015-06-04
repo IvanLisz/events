@@ -13,10 +13,10 @@
 	 * TODO: Describe this service
 	 *
 	 */
-	AuthService.$inject = ['$location', '$rootScope', '$http', 'ipCookie', '$q', 'Facebook'];
+	AuthService.$inject = ['$http', 'ipCookie', '$q', 'Facebook', 'EventEmmiter'];
 
-	function AuthService ($location, $rootScope, $http, ipCookie, $q, Facebook) {
-		var currentUser, loginPromise;
+	function AuthService ($http, ipCookie, $q, Facebook, EventEmmiter) {
+		var currentUser, loginPromise, eventEmmiter;
 
 		initialize();
 
@@ -29,12 +29,14 @@
 			isLoggedIn: isLoggedIn,
 			getCurrentUser: getCurrentUser,
 			isAdmin: isAdmin,
-			getToken: getToken
+			getToken: getToken,
+			onUserChange: onUserChange
 		};
 
 		///////////////////////////////////////////
 
 		function initialize () {
+			eventEmmiter = new EventEmmiter();
 			currentUser = {};
 			if(getToken()) {
 				loginPromise = $q.defer();
@@ -121,8 +123,8 @@
 
 				$http.post('/auth/login', data).
 				success(function (logged) {
-					setToken(logged.token, logged.expiration);
-					currentUser = logged.user;
+					_setToken(logged.token, logged.expiration);
+					_setUserChange(logged.user);
 					loginPromise.resolve(logged.user);
 				}).
 				error(function(err) {
@@ -141,7 +143,7 @@
 		 */
 		function logout () {
 			ipCookie.remove('token');
-			currentUser = {};
+			_setUserChange({});
 		}
 
 		/**
@@ -240,8 +242,30 @@
 		/**
 		 * Set auth token
 		 */
-		function setToken (token, expiration) {
+		function _setToken (token, expiration) {
 			return ipCookie('token', token, { expirationUnit: 'minutes', expires: expiration });
 		}
+
+		/**
+		 * Set auth user
+		 */
+		function _setUserChange (user) {
+			console.log('set change');
+			eventEmmiter.trigger('userChange', user);
+			return currentUser = user;
+		}
+
+		/**
+		 * @ngdoc method
+		 * @name onUserChange
+		 * @methodOf events.auth.factory:Auth
+		 *
+		 * @description
+		 * Registers a handler when a user logs in, logs out, or changes something.
+		*/
+		function onUserChange (handler) {
+			return eventEmmiter.on('userChange', handler);
+		}
+
 	}
 })();

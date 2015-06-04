@@ -40,10 +40,11 @@ function create (req, res, next) {
  * Get a single user
  */
 function show (req, res, next) {
+	console.log('show');
 	var username = req.params.username;
 	User.findOne({'username': username}, function (err, user) {
 		if (err) return next(err);
-		if (!user) return res.send(401);
+		if (!user) return res.status(200).send();
 		res.json(user);
 	});
 };
