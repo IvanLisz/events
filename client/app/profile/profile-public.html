@@ -1,5 +1,9 @@
 <div ng-if="ctrl.profile">
 	<h1>{{::ctrl.profile.name}}</h1>
+
+	<!-- Badges -->
+	<ev-user-badges x-badges="ctrl.badges" x-unlocked="ctrl.profile.badges"></ev-user-badges>
+
 	<ev-if-allowed x-user-id="ctrl.profile.id">
 		<md-button 
 		 class="md-raised md-primary" 

@@ -113,13 +113,19 @@ User.find({}).remove(function() {
 Badge.find({}).remove(function() {
 	createSeed(Badge, [
 	{
-		name: "Pele",
-		description: "badge for being pele",
-		picture: "?"
-	}, {
-		name: "AW3S0M3",
-		description: "badge of awesomeness",
-		picture: "?"
+		name: 'Pele',
+		description: 'badge for being pele',
+		picture: 'https://cdn4.iconfinder.com/data/icons/search-engine-optimization/512/label_price_ticket_badge_banner_flat_icon_symbol-512.png'
+	}, 
+	{
+		name: 'AW3S0M3',
+		description: 'badge of awesomeness',
+		picture: 'http://icons.tipografias.org/plog-content/images/iconos-vida-diaria/brandcamp-badge/search.png'
+	},
+	{
+		name: 'Badge de prueba',
+		description: 'badge of awesomeness',
+		picture: 'https://cdn1.iconfinder.com/data/icons/education-round-flat-pack/512/14-512.png'
 	}
 	]);
 });
