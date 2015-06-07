@@ -96,6 +96,25 @@ function me (req, res, next) {
 };
 
 
+// Updates an existing thing in the DB.
+function update (req, res) {
+	var user = req.user;
+
+	User.find({id: user.id}, function (err, userData) {
+		if (err) { return _handleError(res, err); }
+		if(!userData) { return res.send(404); }
+
+		userData = userData[0];
+
+		var updated = _.merge(userData, req.body);
+		updated.save(function (err) {
+			if (err) { return _handleError(res, err); }
+			return res.json(200, userData);
+		});
+	}).limit(1);
+};
+
+
 
 /**
  * Authentication callback
@@ -113,5 +132,6 @@ module.exports = {
 	destroy: destroy,
 	changePassword: changePassword,
 	me: me,
-	authCallback: authCallback
+	authCallback: authCallback,
+	update: update
 }

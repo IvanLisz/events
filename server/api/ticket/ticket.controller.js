@@ -6,16 +6,9 @@ var _ 		= require('lodash'),
 	gConfig 	= require('../../config/global-variables.js');
 
 
-function _addTicket(user, eventID, ticketID, callback){
+function _addTicket(user, eventID, ticketID, extraUsers, callback){
 
 	// TODO if you have a cancelled ticket activate it.
-
-	var newParticipant = {
-		id: user.id,
-		name: user.name,
-		picture: user.picture,
-		role: "guest"
-	};
 
 	Event.find({id: eventID}, function (err, eventData) {
 		if (err) { return callback(err); }
@@ -23,23 +16,31 @@ function _addTicket(user, eventID, ticketID, callback){
 
 		eventData = eventData[0];
 
-		if(eventData.quota.limit != -1 && eventData.quota.now >= eventData.quota.limit){ return callback("quota limit", null) };
-
-		eventData.quota.now = eventData.quota.now + 1;
-
+		if(eventData.quota.limit != -1 && eventData.participants.length >= eventData.quota.limit){ return callback("quota limit", null) };
 		var ticketIndex = eventData.tickets.map(function (obj){ return obj.id }).indexOf(ticketID);
 		if (ticketIndex == -1){
 			return callback("Event: The ticket doesnt exists", null);
 		}
-
 		var particpantIndex = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
 		if (particpantIndex !== -1){
 			return callback("Event: The user is already participating", null);
 		}
 
-		newParticipant.tid = ticketID;
+		var tmpParticipant = {
+			id: user.id,
+			name: user.name,
+			picture: user.picture,
+			role: "guest",
+			linkedWith: user.id,
+			tid: ticketID
+		};
 
-		eventData.participants.push(newParticipant);
+		var newParticipant = _clone(tmpParticipant);
+
+		var arrParticipants = [];
+
+		eventData.participants.push(tmpParticipant);
+
 
 		User.find({id: user.id}, function (err, userData) {
 			if (err) { return callback(err, null); }
@@ -52,7 +53,7 @@ function _addTicket(user, eventID, ticketID, callback){
 				return callback("User: Event is already in user", null);
 			}
 
-			userData.tickets.push({
+			var ticketData = {
 				eid: eventID,
 				tid: ticketID,
 				info: {
@@ -60,16 +61,54 @@ function _addTicket(user, eventID, ticketID, callback){
 						start: eventData.duration.start,
 						end: eventData.duration.end
 					},
-				price: eventData.tickets[ticketIndex].price,
-				category: eventData.tickets[ticketIndex].category
+					price: eventData.tickets[ticketIndex].price,
+					category: eventData.tickets[ticketIndex].category
+				},
+				linkedWith: user.id
+			};
+			userData.tickets.push(ticketData);
+
+			arrParticipants.push(tmpParticipant);
+
+			extraUsers.forEach(function(element, index){
+
+				tmpParticipant.id = element.id;
+				tmpParticipant.name = element.name;
+				tmpParticipant.picture = element.picture;
+
+				eventData.participants.push(tmpParticipant);
+				arrParticipants.push(tmpParticipant);
+
+
+				if (element.id > -1){
+
+					console.log(element.name);
+					User.find({id: element.id}, function (err, extraData) {
+
+						extraData = extraData[0];
+
+						extraData.tickets.push(ticketData);
+
+								
+						extraData.save(function (err, doc) {
+							if(err) {
+								console.log(err);
+								return callback(err, null);
+							}
+						});
+
+					}).limit(1);
 				}
+
 			});
+
 
 			eventData.save(function (err, doc) {
 				if(err) {
 					console.log(err);
 					return callback(err, null);
 				}
+
 				userData.save(function (err, newUser) {
 					if(err) {
 						console.log(err);
@@ -80,7 +119,6 @@ function _addTicket(user, eventID, ticketID, callback){
 			});
 		}).limit(1);
 
-			return callback(null, newParticipant);
 	}).limit(1);
 
 
@@ -101,7 +139,6 @@ function _cancelTicket(user, eventID, callback) {
 
 		eventData.participants.splice(index, 1);
 
-		eventData.quota.now = eventData.quota.now - 1;
 
 		User.find({id: user.id}, function (err, userData) {
 			if (err) { return callback(err, null); }
@@ -140,9 +177,20 @@ function buy (req, res) {
 	var eventID = req.params.eid;
 	var ticketID = req.body.tid;
 
-	console.log(eventID);
-	console.log(ticketID);
-	_addTicket(user, eventID, ticketID, function (err, newTicket){
+	var defExtras = [{
+		id: 1, // if friendlisted then the ticket will be able at friends profile 
+		name: "Ramon Jamon",
+		picture: "?",
+			
+	},{
+		id: -1, // if friendlisted then the ticket will be able at friends profile 
+		name: "Jorgito",
+		picture: "?",
+			
+	}];
+	var extras = req.body.extras || defExtras;
+
+	_addTicket(user, eventID, ticketID, extras, function (err, newTicket){
 		if (err){ return _handleError(res, err); }
 		if (!newTicket){ return res.send(500); }
 		return res.json(200, newTicket);
@@ -154,6 +202,7 @@ function cancel (req, res) {
 	var user = req.user;
 	var eventID = req.params.eid;
 	var ticketID = req.body.tid;
+	var quantity = req.body.quantity || 1;
 
 	_cancelTicket(user, eventID, function (err, newTicket){
 		if (err){ return _handleError(res, err); }
@@ -199,6 +248,11 @@ function list (req, res) {
 function _handleError(res, err) {
 	return res.send(500, err);
 }
+
+
+function _clone (obj) {
+	return JSON.parse(JSON.stringify(obj));
+};
 
 module.exports = {
 	buy: buy,
