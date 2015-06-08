@@ -3,7 +3,7 @@
 var _ 		= require('lodash'),
 	User 	= require('../user/user.model.js'),
 	Event 	= require('../event/event.model.js'),
-	gConfig 	= require('../../config/global-variables.js');
+	gConfig = require('../../config/global-variables.js');
 
 
 function _addTicket(user, eventID, ticketID, extraUsers, callback){
@@ -18,9 +18,11 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 
 		if(eventData.quota.limit != -1 && eventData.participants.length >= eventData.quota.limit){ return callback("quota limit", null) };
 		var ticketIndex = eventData.tickets.map(function (obj){ return obj.id }).indexOf(ticketID);
+
 		if (ticketIndex == -1){
 			return callback("Event: The ticket doesnt exists", null);
 		}
+
 		var particpantIndex = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
 		if (particpantIndex !== -1){
 			return callback("Event: The user is already participating", null);
@@ -98,6 +100,8 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 						});
 
 					}).limit(1);
+				} else {
+					userData.tickets.push(ticketData);
 				}
 
 			});
@@ -125,33 +129,54 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 }
 
 
-function _cancelTicket(user, eventID, callback) {
+function _cancelTicket(user, eventID, cancelUsers, callback) {
 	Event.find({id: eventID}, function (err, eventData) {
 		if (err) { return callback(err); }
 		if(!eventData) { return callback(null,null) }
 
+		var removeArr = [];
+
 		eventData = eventData[0];
-
-		var index = eventData.participants.map(function (obj){ return obj.id }).indexOf(user.id);
-		if (index === -1) {
-			return callback("Event: User is not participating", null);
-		}
-
-		eventData.participants.splice(index, 1);
-
-
-		User.find({id: user.id}, function (err, userData) {
+		User.find({"tickets": { $elemMatch: { linkedWith: user.id, eid: eventID } } }, function (err, usersData) {
 			if (err) { return callback(err, null); }
-			if(!userData) { return callback(null, null); }
+			if(!usersData) { return callback(null, null); }
 
-			userData = userData[0];
 
-			userData.tickets.forEach(function(ticketData, ticketIndex){
-				// TODO cancel some
-				if (ticketData.eid == eventID && ticketData.status > 0) {
-					userData.tickets[ticketIndex].status = 0;
-				}
+			eventData.participants.forEach(function (participant, participantIndex){
+				cancelUsers.forEach(function (cancelUser){
+					if (participant.id == cancelUser.uid && participant.tid == cancelUser.tid && participant.linkedWith == user.id) {
+						removeArr.push(participantIndex);	
+					}
+				});
 			});
+
+			usersData.forEach(function (userData, uindex) {
+				var count = 0;
+				userData.tickets.forEach(function (ticketData){
+					cancelUsers.forEach(function (cancelUser){
+						if (count < cancelUser.quantity && ticketData.tid == cancelUser.tid && ticketData.status > 0){
+							console.log("canceling ticket");
+							count = count + 1;
+							ticketData.status = 0;
+						}
+					});
+				});
+				userData.save(function (err, newUsers) {
+					if(err) {
+						console.log(err);
+						return callback(err, null);
+					}
+					
+				});
+			});
+
+
+			removeArr.forEach(function (removeArrElem){
+				eventData.participants.splice(removeArrElem, 1);			
+			});
+//			console.log(eventData);
+					console.log(usersData);
+
 
 			eventData.save(function (err, newEvent) {
 				if(err) {
@@ -159,15 +184,13 @@ function _cancelTicket(user, eventID, callback) {
 					return callback(err, null);
 				}
 
-				userData.save(function (err, newUser) {
-					if(err) {
-						console.log(err);
-						return callback(err, null);
-					}
-					return callback(null, newEvent.participants);
-				});
+				return callback(null, usersData[usersData.map(function (obj) {return obj.id}).indexOf(user.id)].tickets);
+
 			});
-		}).limit(1);
+
+		}).limit(cancelUsers.length);
+
+
 	}).limit(1);
 }
 
@@ -202,9 +225,9 @@ function cancel (req, res) {
 	var user = req.user;
 	var eventID = req.params.eid;
 	var ticketID = req.body.tid;
-	var quantity = req.body.quantity || 1;
+	var cancelTickets = req.body.cancelIds || [{uid: 1, tid: 0, quantity: 1}, {uid: 4, tid: 0, quantity: 2}];
 
-	_cancelTicket(user, eventID, function (err, newTicket){
+	_cancelTicket(user, eventID, cancelTickets, function (err, newTicket){
 		if (err){ return _handleError(res, err); }
 		if (!newTicket){ return res.send(500); }
 		return res.json(200, newTicket);
