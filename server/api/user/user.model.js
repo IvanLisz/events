@@ -33,7 +33,8 @@ var UserSchema = new Schema({
 			category: String
 		},
 		status: { type: Number, default: 2 }, // 0: Cancelled  - 1 Active - 2 Pending
-		linkedWith: Number
+		linkedWith: Number,
+		participantID: String
 	}],
 	favorites: [Number], // TODO {id, date}
 	badges: [Number]

@@ -16,6 +16,7 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 
 		eventData = eventData[0];
 
+
 		if(eventData.quota.limit != -1 && eventData.participants.length >= eventData.quota.limit){ return callback("quota limit", null) };
 		var ticketIndex = eventData.tickets.map(function (obj){ return obj.id }).indexOf(ticketID);
 
@@ -39,7 +40,6 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 
 		var newParticipant = _clone(tmpParticipant);
 
-		var arrParticipants = [];
 
 		eventData.participants.push(tmpParticipant);
 
@@ -68,59 +68,34 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 				},
 				linkedWith: user.id
 			};
-			userData.tickets.push(ticketData);
 
-			arrParticipants.push(tmpParticipant);
+			ticketData.participantID = eventData.participants[eventData.participants.length - 1]._id;
 
-			extraUsers.forEach(function(element, index){
+			userData.tickets.push(ticketData); //user ticket
 
-				tmpParticipant.id = element.id;
-				tmpParticipant.name = element.name;
-				tmpParticipant.picture = element.picture;
-
-				eventData.participants.push(tmpParticipant);
-				arrParticipants.push(tmpParticipant);
-
-
-				if (element.id > -1){
-
-					console.log(element.name);
-					User.find({id: element.id}, function (err, extraData) {
-
-						extraData = extraData[0];
-
-						extraData.tickets.push(ticketData);
-
-								
-						extraData.save(function (err, doc) {
-							if(err) {
-								console.log(err);
-								return callback(err, null);
-							}
-						});
-
-					}).limit(1);
-				} else {
-					userData.tickets.push(ticketData);
-				}
-
-			});
-
-
-			eventData.save(function (err, doc) {
-				if(err) {
+			_updateUserTickets(extraUsers, ticketData, tmpParticipant, userData, eventData, 0, function (err){
+				if(err){
 					console.log(err);
 					return callback(err, null);
 				}
 
-				userData.save(function (err, newUser) {
+				eventData.save(function (err, doc) {
 					if(err) {
 						console.log(err);
 						return callback(err, null);
 					}
-					return callback(null, newParticipant);
+					userData.save(function (err, newUser) {
+						if(err) {
+							console.log(err);
+							return callback(err, null);
+						}
+						return callback(null, newParticipant);
+					});
 				});
+				
 			});
+
+
 		}).limit(1);
 
 	}).limit(1);
@@ -128,70 +103,147 @@ function _addTicket(user, eventID, ticketID, extraUsers, callback){
 
 }
 
+function _updateUserTickets (extraUsers, ticketData, tmpParticipant, userData, eventData, index, callback) {
+	if (!extraUsers || !ticketData || !tmpParticipant || !userData || !eventData || index >= extraUsers.length) {
+		callback();
+		return;
+	}
 
-function _cancelTicket(user, eventID, cancelUsers, callback) {
-	Event.find({id: eventID}, function (err, eventData) {
-		if (err) { return callback(err); }
-		if(!eventData) { return callback(null,null) }
+	tmpParticipant.id = extraUsers[index].id;
+	tmpParticipant.name = extraUsers[index].name;
+	tmpParticipant.picture = extraUsers[index].picture;
 
-		var removeArr = [];
-
-		eventData = eventData[0];
-		User.find({"tickets": { $elemMatch: { linkedWith: user.id, eid: eventID } } }, function (err, usersData) {
-			if (err) { return callback(err, null); }
-			if(!usersData) { return callback(null, null); }
-
-
-			eventData.participants.forEach(function (participant, participantIndex){
-				cancelUsers.forEach(function (cancelUser){
-					if (participant.id == cancelUser.uid && participant.tid == cancelUser.tid && participant.linkedWith == user.id) {
-						removeArr.push(participantIndex);	
-					}
-				});
-			});
-
-			usersData.forEach(function (userData, uindex) {
-				var count = 0;
-				userData.tickets.forEach(function (ticketData){
-					cancelUsers.forEach(function (cancelUser){
-						if (count < cancelUser.quantity && ticketData.tid == cancelUser.tid && ticketData.status > 0){
-							console.log("canceling ticket");
-							count = count + 1;
-							ticketData.status = 0;
-						}
-					});
-				});
-				userData.save(function (err, newUsers) {
-					if(err) {
-						console.log(err);
-						return callback(err, null);
-					}
-					
-				});
-			});
+	eventData.participants.push(tmpParticipant);
+	ticketData.participantID = eventData.participants[eventData.participants.length - 1]._id;
 
 
-			removeArr.forEach(function (removeArrElem){
-				eventData.participants.splice(removeArrElem, 1);			
-			});
-//			console.log(eventData);
-					console.log(usersData);
 
+	if (extraUsers[index].id > -1){
+		User.find({id: extraUsers[index].id}, function (err, extraData) {
+			extraData = extraData[0];
 
-			eventData.save(function (err, newEvent) {
+			extraData.tickets.push(ticketData);
+			extraData.save(function (err, doc) {
 				if(err) {
 					console.log(err);
 					return callback(err, null);
 				}
-
-				return callback(null, usersData[usersData.map(function (obj) {return obj.id}).indexOf(user.id)].tickets);
-
+				_updateUserTickets(extraUsers, ticketData, tmpParticipant, userData, eventData, index + 1, callback);
 			});
 
-		}).limit(cancelUsers.length);
+		}).limit(1);
+				
+	} else {
+		userData.tickets.push(ticketData);
+		_updateUserTickets(extraUsers, ticketData, tmpParticipant, userData, eventData, index + 1, callback);
+	}
+}
 
 
+function _cancelTicket(user, eventID, cancelUsers, callback) {
+	if(!eventID || !user || !cancelUsers){
+		return callback({err: "not valid ddata"}, null);
+	}
+
+	Event.find({id: eventID}, function (err, eventData) {
+		if (err) { return callback(err); }
+		if(!eventData) { return callback(null,null) }
+
+		eventData = eventData[0];
+
+
+		User.find({"tickets": { $elemMatch: { linkedWith: user.id, eid: eventID, status: { $gt: 0 } } } }, function (err, usersData) {
+			if (err) { return callback(err, null); }
+			if(!usersData) { return callback({err: "No tickets"}, null); }
+
+			_removeParticipants(user, cancelUsers, eventData, 0, function (err){
+				if(err){
+					console.log(err);
+					return callback(err, null);
+				}
+
+				_cancelUserTicket(cancelUsers, usersData, 0, function (err){
+					if(err){
+						console.log(err);
+						return callback(err, null);
+					}	
+					eventData.save(function (err, newEvent) {
+						if(err) {
+							console.log(err);
+							return callback(err, null);
+						}
+
+						console.log("SENDING DATA");
+						return callback(null, "OK")//usersData[usersData.map(function (obj){return obj.id}).indexOf(user.id)].tickets);
+
+					});
+				});
+			});
+		});//.limit(100);
 	}).limit(1);
+}
+
+function _removeParticipants (user, cancelUsers, eventData, index, callback){
+	if (!user || !cancelUsers || !eventData){
+		callback({err: "_removeParticipants"});
+		return;
+	}
+
+	if(index >= cancelUsers.length){
+		callback();
+		return;
+	}
+
+	var participantIndex = eventData.participants.map(function (obj){ return String(obj._id) }).indexOf(cancelUsers[index]);
+
+	if (participantIndex == -1){
+		return callback({err: "Event: user isnt participating"});
+	} else {
+		eventData.participants.splice(participantIndex, 1);
+		_removeParticipants (user, cancelUsers, eventData, index + 1, callback);
+	}
+
+}
+
+function _cancelUserTicket(cancelUsers, usersData, index, callback) {
+	if (!cancelUsers || !usersData){
+		callback({err: "_cancelUserTicket"});
+		return;
+	}
+
+	if(index >= cancelUsers.length){
+		callback();
+		return;
+	}
+
+	var arrUpdates = [];
+	usersData.forEach(function (userData, uindex) {
+		userData.tickets.forEach(function (ticketData){
+				if (ticketData.participantID == cancelUsers[index] && ticketData.status > 0){
+					console.log("Cancelling");
+					ticketData.status = 0;
+					arrUpdates.push(uindex);
+				}
+		});
+	});
+
+	_canceluserSave(usersData, arrUpdates, 0, function(){
+		_cancelUserTicket(cancelUsers, usersData, index + 1, callback);
+	});
+}
+
+function _canceluserSave(usersData, updateIds, index, callback){
+	if(index >= updateIds.length){
+		callback();
+		return;
+	}
+
+	usersData[updateIds[index]].save(function (err, newUsers) {
+		if(err) {
+			return callback(err, null);
+		}
+		_canceluserSave(usersData, updateIds, index + 1, callback);
+	});
 }
 
 function buy (req, res) {
@@ -206,7 +258,7 @@ function buy (req, res) {
 		picture: "?",
 			
 	},{
-		id: -1, // if friendlisted then the ticket will be able at friends profile 
+		id: -1,  // if friendlisted then the ticket will be able at friends profile 
 		name: "Jorgito",
 		picture: "?",
 			
@@ -224,12 +276,14 @@ function buy (req, res) {
 function cancel (req, res) {
 	var user = req.user;
 	var eventID = req.params.eid;
-	var ticketID = req.body.tid;
-	var cancelTickets = req.body.cancelIds || [{uid: 1, tid: 0, quantity: 1}, {uid: 4, tid: 0, quantity: 2}];
+	var cancelTickets = req.body.cancelIds || ['5579decc59c43e26442cb7c7', '5579decc59c43e26442cb7c8', '5579decc59c43e26442cb7c9'];
 
 	_cancelTicket(user, eventID, cancelTickets, function (err, newTicket){
 		if (err){ return _handleError(res, err); }
 		if (!newTicket){ return res.send(500); }
+		
+		console.log("FINISH");
+		//console.log(newTicket);
 		return res.json(200, newTicket);
 	});
 }
