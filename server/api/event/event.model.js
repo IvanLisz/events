@@ -19,13 +19,11 @@ var EventSchema = new Schema({
 		id: Number,
 		name: String,
 		picture: String,
-		tid: Number
+		tid: Number,
+		linkedWith: Number
 	}],
 	categories: [String],
-	quota: {
-		now: { type: Number, default: 0 },
-		limit: { type: Number, default: -1 }
-	},
+	quota: { type: Number, default: -1 },
 	memories: [{
 		name: String,
 		provider: { type: String, required: true },

@@ -9,6 +9,7 @@ var Event 	= require('../api/event/event.model'),
 	User 	= require('../api/user/user.model'),
 	Badge 	= require('../api/badge/badge.model');
 
+
 Event.find().remove(function() {
 	createSeed(Event, [
 	{
