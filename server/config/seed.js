@@ -16,8 +16,8 @@ Event.find().remove(function() {
 		description: 'evento peronista',
 		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
 		creator: {
-			id: 2,
-			username: 'peron'
+			id: 1,
+			username: 'test_user'
 		},
 		duration: {start: Date.now() + 3600000, end: Date.now() + 86400000},
 		location: 'Buenos Aires, Argentina',
@@ -28,8 +28,8 @@ Event.find().remove(function() {
 		description: 'evento peronista',
 		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
 		creator: {
-			id: 2,
-			username: 'peron'
+			id: 1,
+			username: 'test_user'
 		},
 		duration: {start: Date.now() + 3600000 * 2, end: Date.now() + 96400000},
 		location: 'Buenos Aires, Argentina',
@@ -40,8 +40,8 @@ Event.find().remove(function() {
 		description: 'evento peronista',
 		picture: 'http://i0.wp.com/www.jdperon.gov.ar/wp-content/uploads/FotoBioPeronInst-e1381427876375.jpg',
 		creator: {
-			id: 2,
-			username: 'peron'
+			id: 1,
+			username: 'test_user'
 		},
 		duration: {start: Date.now(), end: Date.now() + 3600000},
 		location: 'Buenos Aires, Argentina',
@@ -52,8 +52,8 @@ Event.find().remove(function() {
 		description: 'viene pele',
 		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',
 		creator: {
-			id: 1,
-			username: 'pele'
+			id: 3,
+			username: 'a'
 		},
 		duration: {start: Date.now()- 86400000 * 3 , end: Date.now() - 86400000 },
 		location: 'Buenos Aires, Argentina',
@@ -64,8 +64,8 @@ Event.find().remove(function() {
 		description: 'viene pele',
 		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',
 		creator: {
-			id: 1,
-			username: 'pele'
+			id: 3,
+			username: 'a'
 		},
 		duration: {start: Date.now()- 86400000 * 4, end: Date.now() - 86400000 * 2},
 		location: 'Buenos Aires, Argentina',
@@ -76,8 +76,8 @@ Event.find().remove(function() {
 		description: 'viene pele',
 		picture: 'http://www.critica.com.pa/sites/default/files/imagenes/2015/05/07/peles.jpg',
 		creator: {
-			id: 1,
-			username: 'pele'
+			id: 3,
+			username: 'a'
 		},
 		duration: {start: Date.now()- 86400000 * 6, end: Date.now() - 86400000 * 3},
 		location: 'Buenos Aires, Argentina',
@@ -116,7 +116,7 @@ Badge.find({}).remove(function() {
 		name: 'Pele',
 		description: 'badge for being pele',
 		picture: 'https://cdn4.iconfinder.com/data/icons/search-engine-optimization/512/label_price_ticket_badge_banner_flat_icon_symbol-512.png'
-	}, 
+	},
 	{
 		name: 'AW3S0M3',
 		description: 'badge of awesomeness',
