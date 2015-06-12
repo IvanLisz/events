@@ -152,9 +152,9 @@ function create (req, res) {
 	var newEvent = new Event(req.body);
 
 	newEvent.creator.id = user.id;
-	newEvent.name = user.name;
-	newEvent.username = user.username;
-	newEvent.picture = user.picture;
+	newEvent.creator.name = user.name;
+	newEvent.creator.username = user.username;
+	newEvent.creator.picture = user.picture;
 
 	newEvent.creation = Date.now();
 	newEvent.save(function (err, event) {
