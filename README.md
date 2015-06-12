@@ -5,7 +5,7 @@
 *Event Endpoints:*
 ```javascript
 get('/api/events/', index); //OPTIONAL ?limit=10&page=0&type= || next, now, old
-get('/api/events/:id', show); 
+get('/api/events/:id', show);
 get('/api/events/name/:name', showByName); //OPTIONAL ?limit=10&page=0
 post('/api/events/', isAuthenticated(), create);
 put('/api/events/:id', isAuthenticated(), update);
@@ -41,7 +41,7 @@ get('/api/badges/:id', show);
 *Tickets Endpoints:*
 ```javascript
 post('/api/tickets/buy/:eid', isAuthenticated(), buy); //POST { tid: ticketID }
-post('/api/tickets/cancel/:eid', isAuthenticated(), cancel);
+post('/api/tickets/cancel/:eid', isAuthenticated(), cancel); //POST { cancelIds: [_ids] }
 post('/api/tickets/revert/:eid', isAuthenticated(), revert);
 get('/api/tickets/list', isAuthenticated(), list); //OPTIONAL ?limit=10&page=0
 ```
