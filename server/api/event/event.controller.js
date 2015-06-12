@@ -148,12 +148,13 @@ function showByName (req, res) {
 
 // Creates a new event in the DB.
 function create (req, res) {
+	var user = req.user;
 	var newEvent = new Event(req.body);
-	newEvent.participants.push({
-		id: req.user._id,
-		name: req.user.name,
-		picture: req.user.picture,
-		role: "creator"});
+
+	newEvent.creator.id = user.id;
+	newEvent.name = user.name;
+	newEvent.username = user.username;
+	newEvent.picture = user.picture;
 
 	newEvent.creation = Date.now();
 	newEvent.save(function (err, event) {

@@ -11,7 +11,9 @@ var EventSchema = new Schema({
 	creation: { type: Date, default: Date.now },
 	creator: {
 		id: Number,
-		username: String
+		name: String,
+		username: String,
+		picture: String
 	},
 	duration: { start: Date, end: Date },
 	location: String,
