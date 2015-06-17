@@ -42,7 +42,19 @@ var EventSchema = new Schema({
 		id: { type: Number, default: 0 },
 		price: { type: Number, default: 0 },
 		category: { type: String, default: "General" }
-	}]
+	}],
+	publications: [{
+		user:{
+			id: Number,
+			pic: String,
+			name: String,
+			username: String
+		},
+		source: String,
+		text: String,
+		media: String
+	}],
+	hashtag: { type: String, default: null}
 });
 
 /**
