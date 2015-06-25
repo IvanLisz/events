@@ -45,3 +45,14 @@ post('/api/tickets/cancel/:eid', isAuthenticated(), cancel); //POST { cancelIds:
 post('/api/tickets/revert/:eid', isAuthenticated(), revert);
 get('/api/tickets/list', isAuthenticated(), list); //OPTIONAL ?limit=10&page=0
 ```
+
+*Publications Endpoints:*
+```javascript
+post('/api/publications/post/:eid', isAuthenticated(), buy); //POST {"publication": {"text": "hola", "media": "http://example.com/example.jpg"}}
+post('/api/publications/remove/:eid', isAuthenticated(), cancel); //POST  {"pid": "558b8ebcca00a3971ac60bcf"}
+get('/api/publications/list/:eid', list); 
+
+//eid = eventID
+```
+
+
