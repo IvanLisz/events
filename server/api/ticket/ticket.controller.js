@@ -247,12 +247,13 @@ function _canceluserSave(usersData, updateIds, index, callback){
 }
 
 function buy (req, res) {
+	console.log(req.body);
 	// TODO
 	var user = req.user;
 	var eventID = req.params.eid;
 	var ticketID = req.body.tid;
 
-	var defExtras = [{
+	/*var defExtras = [{
 		id: 1, // if friendlisted then the ticket will be able at friends profile 
 		name: "Ramon Jamon",
 		picture: "?",
@@ -262,8 +263,9 @@ function buy (req, res) {
 		name: "Jorgito",
 		picture: "?",
 			
-	}];
-	var extras = req.body.extras || defExtras;
+	}];*/
+
+	var extras = req.body.extras || null;
 
 	_addTicket(user, eventID, ticketID, extras, function (err, newTicket){
 		if (err){ return _handleError(res, err); }
@@ -276,7 +278,11 @@ function buy (req, res) {
 function cancel (req, res) {
 	var user = req.user;
 	var eventID = req.params.eid;
-	var cancelTickets = req.body.cancelIds || ['5579decc59c43e26442cb7c7', '5579decc59c43e26442cb7c8', '5579decc59c43e26442cb7c9'];
+	var cancelTickets = req.body.cancelIds;
+
+	console.log(req.params);
+	console.log(req.body);
+
 
 	_cancelTicket(user, eventID, cancelTickets, function (err, newTicket){
 		if (err){ return _handleError(res, err); }
@@ -286,6 +292,7 @@ function cancel (req, res) {
 		//console.log(newTicket);
 		return res.json(200, newTicket);
 	});
+
 }
 
 function revert (req, res) {

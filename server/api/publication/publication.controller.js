@@ -1,7 +1,6 @@
 'use strict';
 
 var _ 		= require('lodash'),
-	User 	= require('../user/user.model.js'),
 	Event 	= require('../event/event.model.js'),
 	gConfig 	= require('../../config/global-variables.js');
 
@@ -58,6 +57,7 @@ function _removePost(eventID, publicationID, callback){
 
 
 function _addPost(eventID, user, publication, callback){
+	publication = {x: 1}
 	Event.update({id: eventID}, {$push: { 'pubications': publication }}, function(err, newEvent){
 		if (err) { return callback(err, null); }
 		if(!newEvent) { return callback(null, null); }
