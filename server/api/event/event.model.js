@@ -44,6 +44,7 @@ var EventSchema = new Schema({
 		category: { type: String, default: "General" }
 	}],
 	publications: [{
+		uid: Number,
 		user:{
 			id: Number,
 			pic: String,

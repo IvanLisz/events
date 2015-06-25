@@ -7,8 +7,9 @@ var express 	= require('express'),
 
 var router = express.Router();
 
-router.post('/add/:id', auth.isAuthenticated(), controller.add);
-router.post('/remove/:id', auth.isAuthenticated(), controller.remove);
-router.get('/list/:uid', controller.list);
+router.post('/post/:eid', auth.isAuthenticated(), controller.add);
+router.post('/remove/:eid', auth.isAuthenticated(), controller.remove);
+//router.post('/block/:eid', auth.isAuthenticated(), controller.block);
+router.get('/list/:eid', controller.list);
 
 module.exports = router;

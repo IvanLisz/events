@@ -14,6 +14,7 @@ module.exports = function(app) {
 	app.use('/api/favorites', require('./api/favorite'));
 	app.use('/api/tickets', require('./api/ticket'));
 	app.use('/api/badges', require('./api/badge'));
+	app.use('/api/publications', require('./api/publication'));
 
 	app.use('/auth', require('./auth'));
 
